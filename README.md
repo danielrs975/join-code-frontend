@@ -1,4 +1,4 @@
-# Welcome to Join Code API
+# Welcome to Join Code Frontend
 
 ## About
 
