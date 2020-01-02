@@ -1,6 +1,18 @@
-# JoinCodeFrontend
+# Welcome to Join Code API
+
+## About
+
+--------
+
+**Join-Code** is a online text editor that allows programmers to develop projects, scripts and
+all kind of code with others programmers in a real-time collaborative environment. This is the
+Front End part of the application.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.4.
+
+### Tools
+
+* Angular 7
 
 ## Development server
 
