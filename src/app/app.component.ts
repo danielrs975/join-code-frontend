@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/markdown/markdown';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +9,4 @@ import { Socket } from 'ngx-socket-io';
 })
 export class AppComponent {
   title = 'join-code-frontend';
-  constructor(private socket: Socket) {}
 }
