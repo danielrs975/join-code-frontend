@@ -7,12 +7,14 @@ import { Subject } from 'rxjs';
 })
 export class DocumentService {
 
-  updates = new Subject();
+  private updates = new Subject();
+  private cursor = new Subject();
 
   constructor(
     private socket: Socket
   ) {
     this.update();
+    this.getCursors();
   }
 
   /**
@@ -22,6 +24,30 @@ export class DocumentService {
    */
   save(operation) {
     this.socket.emit('save', operation);
+  }
+
+  /**
+   * Return an observable to listen the updates
+   * in the document
+   */
+  listenUpdates() {
+    return this.updates;
+  }
+
+  /**
+   * Return an observable to listen the positions
+   * of the cursors of other users
+   */
+  listenCursors() {
+    return this.cursor;
+  }
+
+  /**
+   * This function send the new coords of the user to the server
+   * @param coords The new coords for the user cursor
+   */
+  updateMyCursor(coords) {
+    this.socket.emit('change-cursor', coords);
   }
 
   /**
@@ -35,10 +61,12 @@ export class DocumentService {
   }
 
   /**
-   * Return an observable to listen the updates
-   * in the document
+   * This function listen to updates in the position
+   * of the other users in the document
    */
-  listenUpdates() {
-    return this.updates;
+  private getCursors() {
+    this.socket.on('update-cursors', (cursor) => {
+      this.cursor.next(cursor);
+    })
   }
 }
