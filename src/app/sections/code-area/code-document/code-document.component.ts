@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { DocumentService } from 'src/app/services/document.service';
+import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 
 
 @Component({
@@ -10,8 +11,12 @@ import { DocumentService } from 'src/app/services/document.service';
 })
 export class CodeDocumentComponent implements OnInit {
 
+  // We see the text editor to get the position of the cursor
+  @ViewChild(CodemirrorComponent, {read: '', static: true}) codeEditor: CodemirrorComponent;
+
   // This is the form of the document
   documentForm: FormGroup
+  cm: any;
 
   constructor(
     private fb: FormBuilder,
@@ -34,11 +39,22 @@ export class CodeDocumentComponent implements OnInit {
     })
   }
 
+  ngAfterViewInit(): void {
+    // console.log(this.codeEditor.codeMirror.cursorCoords());
+    this.cm = this.codeEditor.codeMirror;
+  }
+
   /**
    * This function save the document in the database
    * @param value The new content of the document
    */
   saveDocument(value) {
     this._documentService.save(value);
+  }
+
+  sendCursorPos() {
+    if (this.cm) {
+      console.log(this.cm.cursorCoords());
+    }
   }
 }

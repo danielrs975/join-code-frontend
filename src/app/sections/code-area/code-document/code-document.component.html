@@ -1,11 +1,13 @@
 <div id="code-editor" [formGroup]="documentForm">
     <ngx-codemirror
+        id="editor"
         formControlName="content"
         [options]="{
             lineNumbers: true,
             theme: 'material',
             mode: markdown
         }"
+        (cursorActivity)="sendCursorPos()"
     ></ngx-codemirror>
     <button (click)="saveDocument(documentForm.value)">Save</button>
 </div>
