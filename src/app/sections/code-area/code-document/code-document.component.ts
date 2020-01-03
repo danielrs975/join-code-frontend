@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { Socket } from 'ngx-socket-io';
+import { DocumentService } from 'src/app/services/document.service';
 
 
 @Component({
@@ -15,7 +15,7 @@ export class CodeDocumentComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private socket: Socket
+    private _documentService: DocumentService
   ) { }
 
   ngOnInit() {
@@ -27,9 +27,7 @@ export class CodeDocumentComponent implements OnInit {
     })
 
     // In here we listen when a document changes
-    this.socket.on('change', (doc) => {
-      this.documentForm.patchValue(doc, { emitEvent: false });
-    })
+    this._documentService.listenUpdates().subscribe((doc) => this.documentForm.patchValue(doc, { emitEvent: false }));
 
     this.documentForm.valueChanges.subscribe((value) => {
       this.saveDocument(value);
@@ -41,6 +39,6 @@ export class CodeDocumentComponent implements OnInit {
    * @param value The new content of the document
    */
   saveDocument(value) {
-    this.socket.emit('save', value);
+    this._documentService.save(value);
   }
 }
