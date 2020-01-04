@@ -9,12 +9,16 @@ export class DocumentService {
 
   private updates = new Subject();
   private cursor = new Subject();
+  private userLeaves = new Subject();
+  private notification = new Subject();
 
   constructor(
     private socket: Socket
   ) {
     this.update();
     this.getCursors();
+    this.listenToDisconnects();
+    this.listenNotification();
   }
 
   /**
@@ -24,6 +28,14 @@ export class DocumentService {
    */
   save(operation) {
     this.socket.emit('save', operation);
+  }
+
+  /**
+   * This function emit a event when a user join a document
+   * @param docId The id of the document we want to join
+   */
+  join(docId) {
+    this.socket.emit('join', {docId, userInfo: {}});
   }
 
   /**
@@ -43,12 +55,22 @@ export class DocumentService {
   }
 
   /**
+   * Return an obsarvable to listen when a user
+   * leaves a document
+   */
+  listenLeaves() {
+    return this.userLeaves;
+  }
+
+  /**
    * This function send the new coords of the user to the server
    * @param coords The new coords for the user cursor
    */
   updateMyCursor(coords) {
     this.socket.emit('change-cursor', coords);
   }
+
+  // Listeners
 
   /**
    * This function listen the server in case of
@@ -67,6 +89,24 @@ export class DocumentService {
   private getCursors() {
     this.socket.on('update-cursors', (cursor) => {
       this.cursor.next(cursor);
+    })
+  }
+
+  /**
+   * This function liste when a user leaves a document
+   */
+  private listenToDisconnects() {
+    this.socket.on('user-leave', (user) => {
+      this.userLeaves.next(user);
+    })
+  }
+
+  /**
+   * This function listen to notifications in the document
+   */
+  private listenNotification() {
+    this.socket.on('notification', (not) => {
+      console.log(not);
     })
   }
 }

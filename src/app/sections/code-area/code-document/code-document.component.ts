@@ -26,6 +26,8 @@ export class CodeDocumentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this._documentService.join(123);
+
     // Initialization of the document
     this.documentForm = this.fb.group({
       _id: [123],
@@ -38,6 +40,9 @@ export class CodeDocumentComponent implements OnInit {
 
     // In here we listen to the other users position
     this._documentService.listenCursors().subscribe((coords) => this.setUserCursor(coords));
+
+    // In here we listen when a user leaves the document
+    this._documentService.listenLeaves().subscribe((user) => this.removeMarker(user));
 
     this.documentForm.valueChanges.subscribe((value) => {
       this.saveDocument(value);
@@ -82,7 +87,7 @@ export class CodeDocumentComponent implements OnInit {
     const cursorElement = document.createElement('span');
     // console.log(cursorElement);
     cursorElement.style.borderLeftStyle = 'solid';
-    cursorElement.style.borderLeftWidth = '2px';
+    cursorElement.style.borderLeftWidth = '1px';
     cursorElement.style.borderLeftColor = '#ff0000';
     cursorElement.style.height = `${(cursorCoords.bottom - cursorCoords.top)}px`;
     cursorElement.style.padding = '0';
@@ -92,5 +97,15 @@ export class CodeDocumentComponent implements OnInit {
     // setBookmark first argument: The position of the cursor sent from another client
     // Second argument widget: Generated DOM node
     this.marker = this.cm.setBookmark(coords, { widget: cursorElement });
+  }
+
+  /**
+   * This method remove the pointer of the user
+   * when he leaves the document
+   * @param user The user we want to remove
+   */
+  private removeMarker(user) {
+    console.log("Removing marker")
+    this.marker.clear();
   }
 }
