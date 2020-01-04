@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { DocumentService } from 'src/app/services/document.service';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ActivatedRoute } from '@angular/router';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-code-document',
@@ -39,7 +40,17 @@ export class CodeDocumentComponent implements OnInit {
     })
 
     // In here we listen when a document changes
-    this._documentService.listenUpdates().subscribe((doc) => this.documentForm.patchValue(doc, { emitEvent: false }));
+    this._documentService.listenUpdates().pipe(
+      debounceTime(50)
+    ).subscribe((doc) => {
+      if (this.cm) {
+        const realCoords = this.cm.getCursor();
+        // console.log(realCoords);
+        this.documentForm.patchValue(doc, { emitEvent: false });
+        this.cm.setCursor(realCoords);
+      }
+      this.documentForm.patchValue(doc, { emitEvent: false });
+    });
     this.documentForm.valueChanges.subscribe((value) => this.saveDocument(value));
 
 
@@ -57,10 +68,10 @@ export class CodeDocumentComponent implements OnInit {
     this._documentService.save(value);
   }
 
-  // ngAfterViewInit(): void {
-  //   // console.log(this.codeEditor.codeMirror.cursorCoords());
-  //   this.cm = this.codeEditor.codeMirror;
-  // }
+  ngAfterViewInit(): void {
+    // console.log(this.codeEditor.codeMirror.cursorCoords());
+    this.cm = this.codeEditor.codeMirror;
+  }
 
   
 
