@@ -10,7 +10,6 @@ export class DocumentService {
   private updates = new Subject();
   private cursor = new Subject();
   private userLeaves = new Subject();
-  private notification = new Subject();
 
   constructor(
     private socket: Socket
@@ -35,7 +34,7 @@ export class DocumentService {
    * @param docId The id of the document we want to join
    */
   join(docId) {
-    this.socket.emit('join', {docId, userInfo: {}});
+    this.socket.emit('join', {docId, coords: {}});
   }
 
   /**
@@ -78,7 +77,7 @@ export class DocumentService {
    */
   private update() {
     this.socket.on('change', (update) => {
-       this.updates.next(update);
+      this.updates.next(update);
     })
   }
 
@@ -88,6 +87,7 @@ export class DocumentService {
    */
   private getCursors() {
     this.socket.on('update-cursors', (cursor) => {
+      console.log(cursor);
       this.cursor.next(cursor);
     })
   }

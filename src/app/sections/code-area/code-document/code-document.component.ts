@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { DocumentService } from 'src/app/services/document.service';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-code-document',
@@ -15,45 +16,39 @@ export class CodeDocumentComponent implements OnInit {
 
   // This is the form of the document
   documentForm: FormGroup
-  cm: any;
+  cm: any; // This is the instance of the code editor
 
   // Seeing how it works
-  marker: any;
+  markers: any = {};
 
   constructor(
     private fb: FormBuilder,
-    private _documentService: DocumentService
+    private _documentService: DocumentService,
+    private _activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    this._documentService.join(123);
+    // First a join the document
+    this._documentService.join(this._activatedRoute.snapshot.params.id);
 
     // Initialization of the document
     this.documentForm = this.fb.group({
-      _id: [123],
+      _id: [this._activatedRoute.snapshot.params.id],
       modifyAt: [],
       content: ['']
     })
 
     // In here we listen when a document changes
     this._documentService.listenUpdates().subscribe((doc) => this.documentForm.patchValue(doc, { emitEvent: false }));
+    this.documentForm.valueChanges.subscribe((value) => this.saveDocument(value));
+
 
     // In here we listen to the other users position
-    this._documentService.listenCursors().subscribe((coords) => this.setUserCursor(coords));
+    // this._documentService.listenCursors().subscribe(({user, coords}) => this.setUserCursor(user, coords));
 
     // In here we listen when a user leaves the document
-    this._documentService.listenLeaves().subscribe((user) => this.removeMarker(user));
-
-    this.documentForm.valueChanges.subscribe((value) => {
-      this.saveDocument(value);
-    })
+    // this._documentService.listenLeaves().subscribe((user) => this.removeMarker(user));    
   }
-
-  ngAfterViewInit(): void {
-    // console.log(this.codeEditor.codeMirror.cursorCoords());
-    this.cm = this.codeEditor.codeMirror;
-  }
-
   /**
    * This function save the document in the database
    * @param value The new content of the document
@@ -62,13 +57,12 @@ export class CodeDocumentComponent implements OnInit {
     this._documentService.save(value);
   }
 
-  sendCursorPos() {
-    if (this.cm) {
-      // console.log(this.cm.cursorCoords());
-      // console.log(this.cm.getCursor());
-      this._documentService.updateMyCursor(this.cm.getCursor());
-    }
-  }
+  // ngAfterViewInit(): void {
+  //   // console.log(this.codeEditor.codeMirror.cursorCoords());
+  //   this.cm = this.codeEditor.codeMirror;
+  // }
+
+  
 
   /**
    * In here we update the position of the cursor of a user
@@ -76,36 +70,37 @@ export class CodeDocumentComponent implements OnInit {
    * @param coords The new coords of a user
    * @param id The id of the user
    */
-  private setUserCursor(coords) {
-    if (this.marker) this.marker.clear();
-    // cm: CodeMirror instance
-    // cursorPos: The position of the cursor sent from another client ({line, ch} about CodeMirror)
+  // private setUserCursor(user, coords) {
+  //   // console.log(user, coords);
+  //   if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
+  //   // cm: CodeMirror instance
+  //   // cursorPos: The position of the cursor sent from another client ({line, ch} about CodeMirror)
     
-    // Generate DOM node (marker / design you want to display)
-    const cursorCoords = this.cm.cursorCoords(true, coords);
-    // console.log(cursorCoords);
-    const cursorElement = document.createElement('span');
-    // console.log(cursorElement);
-    cursorElement.style.borderLeftStyle = 'solid';
-    cursorElement.style.borderLeftWidth = '1px';
-    cursorElement.style.borderLeftColor = '#ff0000';
-    cursorElement.style.height = `${(cursorCoords.bottom - cursorCoords.top)}px`;
-    cursorElement.style.padding = '0';
-    cursorElement.style.zIndex = '0';
+  //   // Generate DOM node (marker / design you want to display)
+  //   const cursorCoords = this.cm.cursorCoords(true, coords);
+  //   // console.log(cursorCoords);
+  //   const cursorElement = document.createElement('span');
+  //   // console.log(cursorElement);
+  //   cursorElement.style.borderLeftStyle = 'solid';
+  //   cursorElement.style.borderLeftWidth = '1px';
+  //   cursorElement.style.borderLeftColor = '#ff0000';
+  //   cursorElement.style.height = `${(cursorCoords.bottom - cursorCoords.top)}px`;
+  //   cursorElement.style.padding = '0';
+  //   cursorElement.style.zIndex = '0';
     
-    // Set the generated DOM node at the position of the cursor sent from another client
-    // setBookmark first argument: The position of the cursor sent from another client
-    // Second argument widget: Generated DOM node
-    this.marker = this.cm.setBookmark(coords, { widget: cursorElement });
-  }
+  //   // Set the generated DOM node at the position of the cursor sent from another client
+  //   // setBookmark first argument: The position of the cursor sent from another client
+  //   // Second argument widget: Generated DOM node
+  //   this.markers[user.socket_id] = this.cm.setBookmark(coords, { widget: cursorElement });
+  // }
 
   /**
    * This method remove the pointer of the user
    * when he leaves the document
    * @param user The user we want to remove
    */
-  private removeMarker(user) {
-    console.log("Removing marker")
-    this.marker.clear();
-  }
+  // private removeMarker(user) {
+  //   console.log("Removing marker")
+  //   if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
+  // }
 }
