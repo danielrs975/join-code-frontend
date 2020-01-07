@@ -8,7 +8,6 @@ import { Subject } from 'rxjs';
 export class DocumentService {
 
   private updates = new Subject();
-  // private cursor = new Subject();
   private userLeaves = new Subject();
 
   constructor(
@@ -46,14 +45,6 @@ export class DocumentService {
   }
 
   /**
-   * Return an observable to listen the positions
-   * of the cursors of other users
-   */
-  // listenCursors() {
-  //   return this.cursor;
-  // }
-
-  /**
    * Return an obsarvable to listen when a user
    * leaves a document
    */
@@ -80,26 +71,6 @@ export class DocumentService {
       this.updates.next(update);
     })
   }
-
-  /**
-   * This function listen to updates in the position
-   * of the other users in the document
-   */
-  // private getCursors() {
-  //   this.socket.on('update-cursors', (cursor) => {
-  //     console.log(cursor);
-  //     this.cursor.next(cursor);
-  //   })
-  // }
-
-  /**
-   * This function liste when a user leaves a document
-   */
-  // private listenToDisconnects() {
-  //   this.socket.on('user-leave', (user) => {
-  //     this.userLeaves.next(user);
-  //   })
-  // }
 
   /**
    * This function listen to notifications in the document

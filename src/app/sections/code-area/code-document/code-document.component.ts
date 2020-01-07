@@ -45,20 +45,13 @@ export class CodeDocumentComponent implements OnInit {
     ).subscribe((doc) => {
       if (this.cm) {
         const realCoords = this.cm.getCursor();
-        // console.log(realCoords);
         this.documentForm.patchValue(doc, { emitEvent: false });
         this.cm.setCursor(realCoords);
       }
       this.documentForm.patchValue(doc, { emitEvent: false });
     });
     this.documentForm.valueChanges.subscribe((value) => this.saveDocument(value));
-
-
-    // In here we listen to the other users position
-    // this._documentService.listenCursors().subscribe(({user, coords}) => this.setUserCursor(user, coords));
-
-    // In here we listen when a user leaves the document
-    // this._documentService.listenLeaves().subscribe((user) => this.removeMarker(user));    
+ 
   }
   /**
    * This function save the document in the database
@@ -69,7 +62,6 @@ export class CodeDocumentComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    // console.log(this.codeEditor.codeMirror.cursorCoords());
     this.cm = this.codeEditor.codeMirror;
   }
 
@@ -103,15 +95,5 @@ export class CodeDocumentComponent implements OnInit {
   //   // setBookmark first argument: The position of the cursor sent from another client
   //   // Second argument widget: Generated DOM node
   //   this.markers[user.socket_id] = this.cm.setBookmark(coords, { widget: cursorElement });
-  // }
-
-  /**
-   * This method remove the pointer of the user
-   * when he leaves the document
-   * @param user The user we want to remove
-   */
-  // private removeMarker(user) {
-  //   console.log("Removing marker")
-  //   if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
   // }
 }
