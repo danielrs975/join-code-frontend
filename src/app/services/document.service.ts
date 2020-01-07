@@ -9,6 +9,7 @@ export class DocumentService {
 
   private updates = new Subject();
   private userJoin = new Subject();
+  private userChangePos = new Subject();
   private userLeave = new Subject();
 
   constructor(
@@ -35,6 +36,10 @@ export class DocumentService {
     this.socket.emit('join', {docId, coords: {}});
   }
 
+  updateCursorPos(docId, coords) {
+    this.socket.emit('update-cursor-position', {docId, coords});
+  }
+
   /**
    * Return an observable to listen the updates
    * in the document
@@ -49,6 +54,14 @@ export class DocumentService {
    */
   listenUserJoinIn() {
     return this.userJoin;
+  }
+
+  /**
+   * Return an observable that listen when
+   * a user change their position in the document
+   */
+  listenToUserPosition() {
+    return this.userChangePos;
   }
 
   /**
@@ -76,6 +89,14 @@ export class DocumentService {
   private listenNotification() {
     this.socket.on('notification', (not) => {
       console.log(not);
+    })
+
+    this.socket.on('user-new-position', (user) => {
+      this.userChangePos.next(user);
+    });
+
+    this.socket.on('user-leave', (user) => {
+      this.userLeave.next(user);
     })
   }
 }
