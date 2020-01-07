@@ -8,15 +8,14 @@ import { Subject } from 'rxjs';
 export class DocumentService {
 
   private updates = new Subject();
-  private userLeaves = new Subject();
+  private userJoin = new Subject();
+  private userLeave = new Subject();
 
   constructor(
     private socket: Socket
   ) {
     this.update();
     this.listenNotification();
-    // this.getCursors();
-    // this.listenToDisconnects();
   }
 
   /**
@@ -45,23 +44,22 @@ export class DocumentService {
   }
 
   /**
-   * Return an obsarvable to listen when a user
-   * leaves a document
+   * Return an observable that listen when
+   * a user join in to the document
    */
-  listenLeaves() {
-    return this.userLeaves;
+  listenUserJoinIn() {
+    return this.userJoin;
   }
 
   /**
-   * This function send the new coords of the user to the server
-   * @param coords The new coords for the user cursor
+   * Return an observable that listen when
+   * a user leaves the document
    */
-  updateMyCursor(coords) {
-    this.socket.emit('change-cursor', coords);
+  listenUserLeaves() {
+    return this.userLeave;
   }
 
   // Listeners
-
   /**
    * This function listen the server in case of
    * new changes

@@ -50,8 +50,17 @@ export class CodeDocumentComponent implements OnInit {
       }
       this.documentForm.patchValue(doc, { emitEvent: false });
     });
-    this.documentForm.valueChanges.subscribe((value) => this.saveDocument(value));
- 
+
+    this._documentService.listenUserJoinIn().subscribe((user) => {
+      this.setUserCursor(user, this.cm.getCursor());
+    })
+    this._documentService.listenUserLeaves().subscribe((user) => {
+      this.removeUserCursor(user);
+    })
+
+    this.documentForm.valueChanges.subscribe((value) => {
+      this.saveDocument(value)
+    });
   }
   /**
    * This function save the document in the database
@@ -65,35 +74,42 @@ export class CodeDocumentComponent implements OnInit {
     this.cm = this.codeEditor.codeMirror;
   }
 
-  
-
   /**
    * In here we update the position of the cursor of a user
    * with a given id
    * @param coords The new coords of a user
    * @param id The id of the user
    */
-  // private setUserCursor(user, coords) {
-  //   // console.log(user, coords);
-  //   if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
-  //   // cm: CodeMirror instance
-  //   // cursorPos: The position of the cursor sent from another client ({line, ch} about CodeMirror)
+  private setUserCursor(user, coords) {
+    coords.line += 2;
+    coords.ch += 2;
+    if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
+    // cm: CodeMirror instance
+    // cursorPos: The position of the cursor sent from another client ({line, ch} about CodeMirror)
     
-  //   // Generate DOM node (marker / design you want to display)
-  //   const cursorCoords = this.cm.cursorCoords(true, coords);
-  //   // console.log(cursorCoords);
-  //   const cursorElement = document.createElement('span');
-  //   // console.log(cursorElement);
-  //   cursorElement.style.borderLeftStyle = 'solid';
-  //   cursorElement.style.borderLeftWidth = '1px';
-  //   cursorElement.style.borderLeftColor = '#ff0000';
-  //   cursorElement.style.height = `${(cursorCoords.bottom - cursorCoords.top)}px`;
-  //   cursorElement.style.padding = '0';
-  //   cursorElement.style.zIndex = '0';
+    // Generate DOM node (marker / design you want to display)
+    const cursorCoords = this.cm.cursorCoords(true, coords);
+
+    const cursorElement = document.createElement('span');
+    cursorElement.style.animation = '1s blink step-end infinite'
+    cursorElement.style.borderLeftStyle = 'solid';
+    cursorElement.style.borderLeftWidth = '1.2px';
+    cursorElement.style.borderLeftColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+    cursorElement.style.height = `${(cursorCoords.bottom - cursorCoords.top)}px`;
+    cursorElement.style.padding = '0';
+    cursorElement.style.zIndex = '0';
     
-  //   // Set the generated DOM node at the position of the cursor sent from another client
-  //   // setBookmark first argument: The position of the cursor sent from another client
-  //   // Second argument widget: Generated DOM node
-  //   this.markers[user.socket_id] = this.cm.setBookmark(coords, { widget: cursorElement });
-  // }
+    // Set the generated DOM node at the position of the cursor sent from another client
+    // setBookmark first argument: The position of the cursor sent from another client
+    // Second argument widget: Generated DOM node
+    this.markers[user.socket_id] = this.cm.setBookmark(coords, { widget: cursorElement });
+  }
+
+  /**
+   * Remove the cursor from the code editor
+   * @param user The user that just leave the document
+   */
+  private removeUserCursor(user) {
+    if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
+  }
 }
