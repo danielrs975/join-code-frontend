@@ -55,6 +55,10 @@ export class CodeDocumentComponent implements OnInit {
         this.cm.setCursor(realCoords);
       }
       this.documentForm.patchValue(doc, { emitEvent: false });
+      // console.log(this._documentService.usersInDocument, this._documentService.socketId);
+      this._documentService.usersInDocument.forEach((user) => {
+        this.setUserCursor(user, user.coords);
+      })
     });
 
     // This listener listen when a user join to the document or leave it
@@ -64,8 +68,8 @@ export class CodeDocumentComponent implements OnInit {
     this._documentService.listenUserLeaves().subscribe((user) => {
       this.removeUserCursor(user);
     })
-    this._documentService.listenToUserPosition().subscribe((user) => {
-      this.setUserCursor(user, user['coords']);
+    this._documentService.listenToUserPosition().subscribe((users:any) => {
+      users.forEach((user) => this.setUserCursor(user, user['coords']))
     })
 
     this.documentForm.valueChanges.subscribe((value) => {
@@ -99,7 +103,6 @@ export class CodeDocumentComponent implements OnInit {
    * @param id The id of the user
    */
   private setUserCursor(user, coords) {
-    console.log(user, coords);
     if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
     // cm: CodeMirror instance
     // cursorPos: The position of the cursor sent from another client ({line, ch} about CodeMirror)
@@ -116,7 +119,6 @@ export class CodeDocumentComponent implements OnInit {
       this.colors[user.socket_id] = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
     }
 
-    console.log(this.colors[user.socket_id]);
     cursorElement.style.borderLeftColor = this.colors[user.socket_id]; 
     cursorElement.style.height = `${(cursorCoords.bottom - cursorCoords.top)}px`;
     cursorElement.style.padding = '0';
@@ -126,7 +128,6 @@ export class CodeDocumentComponent implements OnInit {
     // setBookmark first argument: The position of the cursor sent from another client
     // Second argument widget: Generated DOM node
     this.markers[user.socket_id] = this.cm.setBookmark(coords, { widget: cursorElement });
-    console.log(this.markers[user.socket_id]);
   }
 
   /**

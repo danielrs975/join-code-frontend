@@ -12,6 +12,8 @@ export class DocumentService {
   private userChangePos = new Subject();
   private userLeave = new Subject();
 
+  usersInDocument: any = [];
+  socketId;
   constructor(
     private socket: Socket
   ) {
@@ -33,7 +35,9 @@ export class DocumentService {
    * @param docId The id of the document we want to join
    */
   join(docId) {
-    this.socket.emit('join', {docId, coords: {}});
+    this.socket.emit('join', {docId, coords: {line: 0, ch: 0, sticky: null}}, (mySocketId) => {
+      this.socketId = mySocketId;
+    });
   }
 
   updateCursorPos(docId, coords) {
@@ -91,12 +95,14 @@ export class DocumentService {
       console.log(not);
     })
 
-    this.socket.on('user-new-position', (user) => {
-      this.userChangePos.next(user);
+    this.socket.on('user-new-position', (users) => {
+      this.usersInDocument = users.filter((user) => user.socket_id !== this.socketId);
+      this.userChangePos.next(this.usersInDocument);
     });
 
-    this.socket.on('user-leave', (user) => {
-      this.userLeave.next(user);
+    this.socket.on('user-leave', ({users, userRemoved}) => {
+      this.usersInDocument = users.filter((user) => user.socket_id !== this.socketId);
+      this.userLeave.next(userRemoved);
     })
   }
 }
