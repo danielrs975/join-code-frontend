@@ -51,6 +51,7 @@ export class CodeDocumentComponent implements OnInit {
       this.documentForm.patchValue(doc, { emitEvent: false });
     });
 
+    // This listener listen when a user join to the document or leave it
     this._documentService.listenUserJoinIn().subscribe((user) => {
       this.setUserCursor(user, this.cm.getCursor());
     })
@@ -81,8 +82,6 @@ export class CodeDocumentComponent implements OnInit {
    * @param id The id of the user
    */
   private setUserCursor(user, coords) {
-    coords.line += 2;
-    coords.ch += 2;
     if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
     // cm: CodeMirror instance
     // cursorPos: The position of the cursor sent from another client ({line, ch} about CodeMirror)
