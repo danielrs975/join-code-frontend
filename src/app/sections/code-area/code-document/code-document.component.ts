@@ -55,7 +55,6 @@ export class CodeDocumentComponent implements OnInit {
         this.cm.setCursor(realCoords);
       }
       this.documentForm.patchValue(doc, { emitEvent: false });
-      // console.log(this._documentService.usersInDocument, this._documentService.socketId);
       this._documentService.usersInDocument.forEach((user) => {
         this.setUserCursor(user, user.coords);
       })

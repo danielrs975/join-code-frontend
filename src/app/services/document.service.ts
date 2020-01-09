@@ -96,6 +96,7 @@ export class DocumentService {
     })
 
     this.socket.on('user-new-position', (users) => {
+      console.log(users);
       this.usersInDocument = users.filter((user) => user.socket_id !== this.socketId);
       this.userChangePos.next(this.usersInDocument);
     });
