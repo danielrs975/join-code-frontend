@@ -70,8 +70,12 @@ export class CodeDocumentComponent implements OnInit {
     this._documentService.listenToUserPosition().subscribe((users:any) => {
       users.forEach((user) => this.setUserCursor(user, user['coords']))
     })
+    this._documentService.updateMyPos.subscribe((user) => {
+      if (this.cm) this.cm.setCursor(user['coords']);
+    })
 
     this.documentForm.valueChanges.subscribe((value) => {
+      this.updateCursorPos();
       this.saveDocument(value)
     });
   }
@@ -80,7 +84,9 @@ export class CodeDocumentComponent implements OnInit {
    * @param value The new content of the document
    */
   saveDocument(value) {
-    this._documentService.save(value);
+    setTimeout(() => {
+      this._documentService.save(value);
+    }, 5000);
   }
 
   /**
@@ -88,11 +94,24 @@ export class CodeDocumentComponent implements OnInit {
    * the position of its cursor
    */
   updateCursorPos() {
+    // console.log(this.documentForm);
     if (this.cm) this._documentService.updateCursorPos(this.docId ,this.cm.getCursor());
   }
 
   ngAfterViewInit(): void {
     this.cm = this.codeEditor.codeMirror;
+    this.cm.on("keydown", (cm, event) => {
+      if (this.isMovementKey(event.which)) {
+        setTimeout(() => {
+          this.updateCursorPos();
+        }, 10)
+      }
+    })
+    this.cm.on("mousedown", (cm) => {
+      setTimeout(() => {
+        this.updateCursorPos();
+      }, 10);
+    })
   }
 
   /**
@@ -135,5 +154,9 @@ export class CodeDocumentComponent implements OnInit {
    */
   private removeUserCursor(user) {
     if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
+  }
+
+  private isMovementKey(keyCode) {
+    return 33 <= keyCode && keyCode <= 40;
   }
 }

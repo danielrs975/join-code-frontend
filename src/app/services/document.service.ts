@@ -12,6 +12,8 @@ export class DocumentService {
   private userChangePos = new Subject();
   private userLeave = new Subject();
 
+  updateMyPos = new Subject();
+
   usersInDocument: any = [];
   socketId;
   constructor(
@@ -96,9 +98,10 @@ export class DocumentService {
     })
 
     this.socket.on('user-new-position', (users) => {
-      console.log(users);
       this.usersInDocument = users.filter((user) => user.socket_id !== this.socketId);
       this.userChangePos.next(this.usersInDocument);
+      const user = users.find((user) => user.socket_id === this.socketId);
+      if (user) this.updateMyPos.next(user);
     });
 
     this.socket.on('user-leave', ({users, userRemoved}) => {
