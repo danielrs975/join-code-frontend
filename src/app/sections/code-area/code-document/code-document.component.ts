@@ -4,6 +4,7 @@ import { DocumentService } from 'src/app/services/document.service';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
+import { Operation } from '../../../utils/ot';
 
 @Component({
 	selector: 'app-code-document',
@@ -82,9 +83,10 @@ export class CodeDocumentComponent implements OnInit {
    * @param value The new content of the document
    */
 	saveDocument(value) {
-		setTimeout(() => {
-			this._documentService.save(value);
-		}, 5000);
+		// setTimeout(() => {
+		// 	this._documentService.save(value);
+		// }, 5000);
+		this._documentService.save(value);
 	}
 
 	/**
@@ -109,6 +111,12 @@ export class CodeDocumentComponent implements OnInit {
 			setTimeout(() => {
 				this.updateCursorPos();
 			}, 10);
+		});
+		let n = 0;
+		this.cm.on('changes', (cm, changes) => {
+			if (changes[0].origin == 'setValue') return;
+			const operation = new Operation(changes[0], this.documentForm.value.content);
+			// console.log(changes, operation);
 		});
 	}
 
