@@ -1,11 +1,20 @@
-<div id="code-editor" [formGroup]="documentForm">
-    <ngx-codemirror
-        id="editor"
-        formControlName="content"
-        [options]="{
-            lineNumbers: true,
-            theme: 'material',
-            mode: markdown
-        }"
-    ></ngx-codemirror>
+<div class="flex-container">
+    <div style="width:200px;">qlq</div>
+
+    <div>
+        <div id="code-editor" [formGroup]="documentForm">
+            <ngx-codemirror
+                id="editor"
+                formControlName="content"
+                [options]="{
+                    lineNumbers: true,
+                    theme: 'material',
+                    mode: markdown
+                }"
+            ></ngx-codemirror>
+        </div>
+        <div class="terminal"> <app-terminal class="app-terminal" ></app-terminal> </div>
+    
+    </div>
+ 
 </div>
