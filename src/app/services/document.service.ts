@@ -11,6 +11,7 @@ export class DocumentService {
 	private userChangePos = new Subject();
 	private userLeave = new Subject();
 
+	openDoc = new Subject();
 	updateMyPos = new Subject();
 
 	usersInDocument: any = [];
@@ -104,6 +105,10 @@ export class DocumentService {
 		this.socket.on('user-leave', ({ users, userRemoved }) => {
 			this.usersInDocument = users.filter((user) => user.socket_id !== this.socketId);
 			this.userLeave.next(userRemoved);
+		});
+
+		this.socket.on('sendDoc', (doc) => {
+			this.openDoc.next(doc);
 		});
 	}
 }

@@ -3,6 +3,7 @@
  * to the Operational transformation algorithm
  * @author Daniel Rodriguez
  */
+import * as ot from 'ot';
 
 const typesOperations = {
 	'+input': 'insert',
@@ -12,7 +13,8 @@ const typesOperations = {
 export class Operation {
 	type: String;
 	text: String;
-	position: Number;
+	position: number;
+	doc: string;
 
 	constructor(cmOperation: any, doc: string) {
 		this.type = typesOperations[cmOperation.origin];
@@ -22,6 +24,52 @@ export class Operation {
 				this.isJumpLine(cmOperation.removed);
 		// This is for inserting a character
 		this.position = this.countCharsBeforeChange(doc, cmOperation.from.line) + cmOperation.from.ch;
+		this.doc = doc;
+	}
+
+	static applyOperation(operation, doc) {
+		const op = ot.TextOperation.fromJSON(operation);
+		// console.log(op);
+		try {
+			doc.content = op.apply(doc.content);
+		} catch (e) {
+			console.log(e);
+		}
+		return doc;
+	}
+
+	static transformOperation(operation, operations) {
+		let op = { ...operation };
+		op.createdAt = new Date(op.createdAt);
+		op.op = ot.TextOperation.fromJSON(op.op);
+		// console.log(op);
+		let transformedOp;
+		operations.forEach((opMade) => {
+			if (op.createdAt <= opMade.createdAt) {
+				// console.log(op, opMade);
+				transformedOp = ot.TextOperation.transform(op.op, opMade.op);
+			}
+		});
+		if (transformedOp) return transformedOp[0];
+		return op.op;
+	}
+
+	createOperation() {
+		let op: any;
+		const operation = this;
+		const doc = this.doc;
+		// console.log(operation, doc);
+		if (operation.type == 'insert')
+			op = new ot.TextOperation()
+				.retain(operation.position)
+				.insert(operation.text)
+				.retain(doc.length - operation.text.length - operation.position);
+		else
+			op = new ot.TextOperation()
+				.retain(operation.position)
+				.delete(operation.text)
+				.retain(doc.length + operation.text.length - operation.position - operation.text.length);
+		return op;
 	}
 
 	private countCharsBeforeChange(doc: string, lines: number): Number {
@@ -31,11 +79,11 @@ export class Operation {
 	}
 
 	private isJumpLine(modification: any) {
-		const itIs = modification.every((str) => str === '') && modification.length === 2;
-		if (itIs) {
-			return '\n';
-		} else {
-			return modification[0];
+		let str = '';
+		for (let i = 0; i < modification.length - 1; i++) {
+			str = str + modification[i] + '\n';
 		}
+		str = str + modification[modification.length - 1];
+		return str;
 	}
 }

@@ -5,6 +5,7 @@ import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 import { Operation } from '../../../utils/ot';
+import * as ot from 'ot';
 
 @Component({
 	selector: 'app-code-document',
@@ -27,6 +28,8 @@ export class CodeDocumentComponent implements OnInit {
 	// The id of the document open
 	docId;
 
+	operations = [];
+
 	constructor(
 		private fb: FormBuilder,
 		private _documentService: DocumentService,
@@ -47,18 +50,17 @@ export class CodeDocumentComponent implements OnInit {
 		});
 
 		// In here we listen when a document changes
-		this._documentService.listenUpdates().pipe(debounceTime(50)).subscribe((doc) => {
-			if (this.cm) {
-				const realCoords = this.cm.getCursor();
-				this.documentForm.patchValue(doc, { emitEvent: false });
-				this.cm.setCursor(realCoords);
-			}
-			this.documentForm.patchValue(doc, { emitEvent: false });
+		this._documentService.listenUpdates().pipe(debounceTime(50)).subscribe((operation) => {
+			console.log(operation);
+			const newDoc = Operation.applyOperation(operation['op'], this.documentForm.value);
+			this.documentForm.patchValue(newDoc, { emitEvent: false });
 			this._documentService.usersInDocument.forEach((user) => {
 				this.setUserCursor(user, user.coords);
 			});
 		});
-
+		this._documentService.openDoc.subscribe((doc) => {
+			this.documentForm.patchValue(doc, { emitEvent: false });
+		});
 		// This listener listen when a user join to the document or leave it
 		this._documentService.listenUserJoinIn().subscribe((user) => {
 			this.setUserCursor(user, this.cm.getCursor());
@@ -75,18 +77,18 @@ export class CodeDocumentComponent implements OnInit {
 
 		this.documentForm.valueChanges.subscribe((value) => {
 			this.updateCursorPos();
-			this.saveDocument(value);
+			// this.saveDocument(value);
 		});
 	}
 	/**
    * This function save the document in the database
-   * @param value The new content of the document
+   * @param operation The operation that was made to the document
    */
-	saveDocument(value) {
+	saveDocument(operation) {
 		// setTimeout(() => {
 		// 	this._documentService.save(value);
 		// }, 5000);
-		this._documentService.save(value);
+		this._documentService.save(operation);
 	}
 
 	/**
@@ -115,7 +117,13 @@ export class CodeDocumentComponent implements OnInit {
 		let n = 0;
 		this.cm.on('changes', (cm, changes) => {
 			if (changes[0].origin == 'setValue') return;
-			const operation = new Operation(changes[0], this.documentForm.value.content);
+			console.log(changes);
+			const operation = new Operation(changes[0], this.documentForm.value.content).createOperation().toJSON();
+			const createdAt = new Date();
+			this.operations.push({ op: ot.TextOperation.fromJSON(operation), createdAt });
+			setTimeout(() => {
+				this.saveDocument({ operation, docId: this.docId, createdAt });
+			}, 5000);
 			// console.log(changes, operation);
 		});
 	}
