@@ -3,9 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { DocumentService } from 'src/app/services/document.service';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ActivatedRoute } from '@angular/router';
-import * as sdb from 'sharedb';
-import * as ws from 'reconnecting-websocket';
-// import {  } from 'sharedb';
+import { Operation } from 'src/app/utils/ot';
 
 @Component({
 	selector: 'app-code-document',
@@ -31,9 +29,6 @@ export class CodeDocumentComponent implements OnInit {
 		private _activatedRoute: ActivatedRoute
 	) {
 		this.docId = this._activatedRoute.snapshot.params.id;
-		this.socket = new ws.default('ws://localhost:8080');
-		console.log(sdb);
-		// this.connection = new Connection(this.socket).get('example', '123');
 	}
 
 	ngOnInit() {
@@ -41,12 +36,19 @@ export class CodeDocumentComponent implements OnInit {
 		this.documentForm = this.fb.group({
 			content: [ '' ]
 		});
+
+		// Listen to updates in the document
+		this._documentService.docUpdated.subscribe((document) => this.documentForm.patchValue(document));
 	}
 
 	ngAfterViewInit(): void {
 		this.cm = this.codeEditor.codeMirror;
 		this.cm.on('changes', (_, changes) => {
-			// Here it goes the changes
+			// Ignore the event when is the type of setValue
+			if (changes[0].origin == 'setValue') return;
+			const operation = new Operation(changes[0], this.documentForm.value.content).createOperation();
+
+			this._documentService.sendOperation(operation.toJSON(), this.docId);
 		});
 	}
 }

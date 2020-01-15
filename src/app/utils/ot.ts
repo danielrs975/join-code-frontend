@@ -56,6 +56,10 @@ export class Operation {
 		return op;
 	}
 
+	static fromJSON(json) {
+		return ot.TextOperation.fromJSON(json);
+	}
+
 	private countCharsBeforeChange(doc: string, lines: number): Number {
 		const splittedDoc = doc.split('\n').slice(0, lines);
 		const count = splittedDoc.reduce((acc, currentLine) => acc + currentLine.length, 0) + lines;
