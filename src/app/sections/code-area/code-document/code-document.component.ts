@@ -3,9 +3,9 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { DocumentService } from 'src/app/services/document.service';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ActivatedRoute } from '@angular/router';
-import { debounceTime } from 'rxjs/operators';
-import { Operation } from '../../../utils/ot';
-import * as ot from 'ot';
+import * as sdb from 'sharedb';
+import * as ws from 'reconnecting-websocket';
+// import {  } from 'sharedb';
 
 @Component({
 	selector: 'app-code-document',
@@ -21,156 +21,32 @@ export class CodeDocumentComponent implements OnInit {
 	documentForm: FormGroup;
 	cm: any; // This is the instance of the code editor
 
-	// Seeing how it works
-	markers: any = {};
-	colors: any = {};
-
 	// The id of the document open
 	docId;
-
-	operations = [];
-
+	socket: any;
+	connection: any;
 	constructor(
 		private fb: FormBuilder,
 		private _documentService: DocumentService,
 		private _activatedRoute: ActivatedRoute
 	) {
 		this.docId = this._activatedRoute.snapshot.params.id;
+		this.socket = new ws.default('ws://localhost:8080');
+		console.log(sdb);
+		// this.connection = new Connection(this.socket).get('example', '123');
 	}
 
 	ngOnInit() {
-		// First a join the document
-		this._documentService.join(this._activatedRoute.snapshot.params.id);
-
-		// Initialization of the document
+		this._documentService.join(this.docId);
 		this.documentForm = this.fb.group({
-			_id: [ this._activatedRoute.snapshot.params.id ],
-			modifyAt: [],
 			content: [ '' ]
 		});
-
-		// In here we listen when a document changes
-		this._documentService.listenUpdates().pipe(debounceTime(50)).subscribe((operation) => {
-			console.log(operation);
-			const newDoc = Operation.applyOperation(operation['op'], this.documentForm.value);
-			this.documentForm.patchValue(newDoc, { emitEvent: false });
-			this._documentService.usersInDocument.forEach((user) => {
-				this.setUserCursor(user, user.coords);
-			});
-		});
-		this._documentService.openDoc.subscribe((doc) => {
-			this.documentForm.patchValue(doc, { emitEvent: false });
-		});
-		// This listener listen when a user join to the document or leave it
-		this._documentService.listenUserJoinIn().subscribe((user) => {
-			this.setUserCursor(user, this.cm.getCursor());
-		});
-		this._documentService.listenUserLeaves().subscribe((user) => {
-			this.removeUserCursor(user);
-		});
-		this._documentService.listenToUserPosition().subscribe((users: any) => {
-			users.forEach((user) => this.setUserCursor(user, user['coords']));
-		});
-		this._documentService.updateMyPos.subscribe((user) => {
-			if (this.cm) this.cm.setCursor(user['coords']);
-		});
-
-		this.documentForm.valueChanges.subscribe((value) => {
-			this.updateCursorPos();
-			// this.saveDocument(value);
-		});
-	}
-	/**
-   * This function save the document in the database
-   * @param operation The operation that was made to the document
-   */
-	saveDocument(operation) {
-		// setTimeout(() => {
-		// 	this._documentService.save(value);
-		// }, 5000);
-		this._documentService.save(operation);
-	}
-
-	/**
-   * This method get the event when the user change
-   * the position of its cursor
-   */
-	updateCursorPos() {
-		// console.log(this.documentForm);
-		if (this.cm) this._documentService.updateCursorPos(this.docId, this.cm.getCursor());
 	}
 
 	ngAfterViewInit(): void {
 		this.cm = this.codeEditor.codeMirror;
-		this.cm.on('keydown', (cm, event) => {
-			if (this.isMovementKey(event.which)) {
-				setTimeout(() => {
-					this.updateCursorPos();
-				}, 10);
-			}
+		this.cm.on('changes', (_, changes) => {
+			// Here it goes the changes
 		});
-		this.cm.on('mousedown', (cm) => {
-			setTimeout(() => {
-				this.updateCursorPos();
-			}, 10);
-		});
-		let n = 0;
-		this.cm.on('changes', (cm, changes) => {
-			if (changes[0].origin == 'setValue') return;
-			console.log(changes);
-			const operation = new Operation(changes[0], this.documentForm.value.content).createOperation().toJSON();
-			const createdAt = new Date();
-			this.operations.push({ op: ot.TextOperation.fromJSON(operation), createdAt });
-			setTimeout(() => {
-				this.saveDocument({ operation, docId: this.docId, createdAt });
-			}, 5000);
-			// console.log(changes, operation);
-		});
-	}
-
-	/**
-   * In here we update the position of the cursor of a user
-   * with a given id
-   * @param coords The new coords of a user
-   * @param id The id of the user
-   */
-	private setUserCursor(user, coords) {
-		if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
-		// cm: CodeMirror instance
-		// cursorPos: The position of the cursor sent from another client ({line, ch} about CodeMirror)
-
-		// Generate DOM node (marker / design you want to display)
-		const cursorCoords = this.cm.cursorCoords(true, coords);
-
-		const cursorElement = document.createElement('span');
-		cursorElement.style.animation = '1s blink step-end infinite';
-		cursorElement.style.borderLeftStyle = 'solid';
-		cursorElement.style.borderLeftWidth = '1.2px';
-
-		if (!this.colors[user.socket_id]) {
-			this.colors[user.socket_id] = '#' + ((Math.random() * 0xffffff) << 0).toString(16);
-		}
-
-		cursorElement.style.borderLeftColor = this.colors[user.socket_id];
-		cursorElement.style.height = `${cursorCoords.bottom - cursorCoords.top}px`;
-		cursorElement.style.padding = '0';
-		cursorElement.style.zIndex = '0';
-
-		// Set the generated DOM node at the position of the cursor sent from another client
-		// setBookmark first argument: The position of the cursor sent from another client
-		// Second argument widget: Generated DOM node
-		this.markers[user.socket_id] = this.cm.setBookmark(coords, { widget: cursorElement });
-	}
-
-	/**
-   * Remove the cursor from the code editor
-   * @param user The user that just leave the document
-   */
-	private removeUserCursor(user) {
-		if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
-	}
-
-	private isMovementKey(keyCode) {
-		return 33 <= keyCode && keyCode <= 40;
 	}
 }

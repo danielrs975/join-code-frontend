@@ -27,8 +27,8 @@ export class Operation {
 		this.doc = doc;
 	}
 
-	static applyOperation(operation, doc) {
-		const op = ot.TextOperation.fromJSON(operation);
+	static applyOperation(op, doc) {
+		// const op = ot.TextOperation.fromJSON(operation);
 		// console.log(op);
 		try {
 			doc.content = op.apply(doc.content);
@@ -36,22 +36,6 @@ export class Operation {
 			console.log(e);
 		}
 		return doc;
-	}
-
-	static transformOperation(operation, operations) {
-		let op = { ...operation };
-		op.createdAt = new Date(op.createdAt);
-		op.op = ot.TextOperation.fromJSON(op.op);
-		// console.log(op);
-		let transformedOp;
-		operations.forEach((opMade) => {
-			if (op.createdAt <= opMade.createdAt) {
-				// console.log(op, opMade);
-				transformedOp = ot.TextOperation.transform(op.op, opMade.op);
-			}
-		});
-		if (transformedOp) return transformedOp[0];
-		return op.op;
 	}
 
 	createOperation() {
