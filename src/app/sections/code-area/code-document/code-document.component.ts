@@ -48,7 +48,9 @@ export class CodeDocumentComponent implements OnInit {
 			if (changes[0].origin == 'setValue') return;
 			const operation = new Operation(changes[0], this.documentForm.value.content).createOperation();
 
-			this._documentService.sendOperation(operation.toJSON(), this.docId);
+			setTimeout(() => {
+				this._documentService.sendOperation(operation.toJSON(), this.docId);
+			}, 5000);
 		});
 	}
 }
