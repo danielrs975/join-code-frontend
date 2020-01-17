@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Operation } from '../utils/ot';
 import { Subject } from 'rxjs';
+import * as ot from 'ot';
 @Injectable({
 	providedIn: 'root'
 })
@@ -18,10 +19,14 @@ export class DocumentService {
 	documentIsSynchronized = true;
 	buffer: any;
 	waitingAkn: any;
+
+	versionOfBufferOp: number;
+
 	constructor(private socket: Socket) {
 		// Run the listeners of the doc
 		this.onReceiveOperation();
 		this.onNotifications();
+		this.expOnReceiveOperation();
 	}
 
 	join(docId: string) {
@@ -33,7 +38,7 @@ export class DocumentService {
 		});
 	}
 
-	sendOperation(operation: any, docId: string) {
+	sendOperation(operation: any, docId: string, version: number) {
 		this.documentIsSynchronized = false;
 		// If not send the operation to server to processed
 		if (this.waitingAkn && operation) {
@@ -42,7 +47,10 @@ export class DocumentService {
 			if (this.buffer) {
 				operation = Operation.fromJSON(operation);
 				this.buffer = this.buffer.compose(operation);
-			} else this.buffer = Operation.fromJSON(operation);
+			} else {
+				this.buffer = Operation.fromJSON(operation);
+				this.versionOfBufferOp = version;
+			}
 			return;
 		}
 
@@ -52,22 +60,23 @@ export class DocumentService {
 			operation = this.buffer.toJSON();
 			this.buffer = undefined;
 		}
-
 		this.waitingAkn = operation;
-		this.socket.emit(
-			'operation',
-			{ operation, meta: { socketId: this.socketId, docId, version: this.version } },
-			(operationProcessed) => {
-				if (operationProcessed) {
-					// If exists some operations that are in the buffer
-					// Send it to the server an put it in the waiting aknowledgement variable
-					this.waitingAkn = undefined;
-					this.documentIsSynchronized = true;
-					if (this.buffer) this.sendOperation(undefined, docId);
-					this.version += 1;
-				} else console.log('The error ocurred while applying your operation');
-			}
-		);
+		setTimeout(() => {
+			this.socket.emit(
+				'operation',
+				{ operation, meta: { socketId: this.socketId, docId, version } },
+				(operationProcessed) => {
+					if (operationProcessed) {
+						// If exists some operations that are in the buffer
+						// Send it to the server an put it in the waiting aknowledgement variable
+						this.waitingAkn = undefined;
+						this.documentIsSynchronized = true;
+						if (this.buffer) this.sendOperation(undefined, docId, this.versionOfBufferOp);
+						// this.version += 1;
+					} else console.log('The error ocurred while applying your operation');
+				}
+			);
+		}, 5000);
 	}
 
 	/**
@@ -77,8 +86,33 @@ export class DocumentService {
 	 */
 	private onReceiveOperation() {
 		this.socket.on('operation', (doc) => {
+			console.log(doc);
 			this.version = doc.version;
 			this.docUpdated.next(doc);
+		});
+	}
+
+	/**
+	 * Experimental on Receive operation
+	 */
+	private expOnReceiveOperation() {
+		this.socket.on('experimentalOp', (operation) => {
+			operation = ot.TextOperation.fromJSON(operation);
+			this.waitingAkn =
+				this.waitingAkn ? ot.TextOperation.fromJSON(this.waitingAkn) :
+				undefined;
+			// console.log(operation, this.waitingAkn);
+			let transform1;
+			let transform2;
+			if (this.waitingAkn) {
+				transform1 = ot.TextOperation.transform(this.waitingAkn, operation);
+				if (this.buffer) transform2 = ot.TextOperation.transform(this.buffer, transform1[1]);
+				this.waitingAkn = transform1[0];
+				this.buffer =
+					transform2 ? transform2[0] :
+					undefined;
+			}
+			console.log(this.waitingAkn);
 		});
 	}
 
