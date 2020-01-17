@@ -1,11 +1,19 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+JP&display=swap');
+
 .flex-container {
     display: flex;
 }
   
 .flex-container > div {
-    background-color: #1C1618;
+    background-color: #2D2D2D;
     padding: 8px;
     flex: 1 auto;
+    font-family:'Noto Sans JP', sans-serif;
+    color: #ADADAD;
+}
+
+.editing{
+    padding-left: 0px !important;
 }
 
 .terminal {
@@ -13,13 +21,53 @@
     background-color: #1C1618 !important;
 }
 
-.CodeMirror, .cm-s-material{
-    background-color: #1C1618 !important;
-}
-
 .code-editor{
     height: 50%;
 }
+
+.sidebar{
+    width:200px;
+    border-left: 1px solid #ADADAD !important;
+    border-right: 1px solid #ADADAD !important;
+}
+
+.user-name{
+    margin-bottom: 0;
+    font-weight: bold;
+    padding: 10px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #ADADAD;
+}
+
+.document{
+    background-color: #1d1d1b;
+    padding: 10px;
+    margin: 0;
+    font-weight: bold;
+}
+
+.users{
+    margin-left: 10px;
+}
+
+ul{
+    list-style-type: none;
+}
+
+li {
+    padding: 5px;
+    padding-left: 10px;
+    border: 1px solid #DDDDDD;
+    border-left: none;
+    border-right: none; 
+}
+
+.bottom{
+    position: fixed;
+    bottom: 5px;
+}
+
+
 
 //534F50
 
