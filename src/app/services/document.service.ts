@@ -11,6 +11,8 @@ export class DocumentService {
 	docUpdated = new Subject();
 	notifications = new Subject();
 	opFromServer = new Subject();
+	updateCursors = new Subject();
+	userLeft = new Subject();
 
 	// The version is really important for the algorithm
 	// We are going to get it from the document when we join
@@ -22,6 +24,7 @@ export class DocumentService {
 	waitingAkn: any;
 
 	versionOfBufferOp: number;
+	bufferCursorPos: number;
 
 	constructor(private socket: Socket) {
 		// Run the listeners of the doc
@@ -36,12 +39,13 @@ export class DocumentService {
 			this.socketId = socketId;
 			this.version = doc.version;
 			this.docUpdated.next(doc);
-			console.log(users);
+			this.updateCursors.next(users);
 		});
 	}
 
-	sendOperation(operation: any, docId: string, version: number) {
+	sendOperation(operation: any, docId: string, version: number, cursorPos: any) {
 		this.documentIsSynchronized = false;
+
 		// If not send the operation to server to processed
 		if (this.waitingAkn && operation) {
 			// If the buffer is with an other operation waiting to be processed
@@ -53,6 +57,7 @@ export class DocumentService {
 				this.buffer = Operation.fromJSON(operation);
 				this.versionOfBufferOp = version;
 			}
+			this.bufferCursorPos = cursorPos;
 			return;
 		}
 
@@ -66,14 +71,15 @@ export class DocumentService {
 		setTimeout(() => {
 			this.socket.emit(
 				'operation',
-				{ operation, meta: { socketId: this.socketId, docId, version } },
+				{ operation, meta: { socketId: this.socketId, docId, version, cursorPos } },
 				(operationProcessed) => {
 					if (operationProcessed) {
 						// If exists some operations that are in the buffer
 						// Send it to the server an put it in the waiting aknowledgement variable
 						this.waitingAkn = undefined;
 						this.documentIsSynchronized = true;
-						if (this.buffer) this.sendOperation(undefined, docId, this.versionOfBufferOp);
+						if (this.buffer)
+							this.sendOperation(undefined, docId, this.versionOfBufferOp, this.bufferCursorPos);
 						// this.version += 1;
 					} else console.log('The error ocurred while applying your operation');
 				}
@@ -131,13 +137,20 @@ export class DocumentService {
 	 */
 	private onNotifications() {
 		this.socket.on('notification', ({ type, msg, info }) => {
+			let users;
 			switch (type) {
 				case 'join':
-					const users = info.users.filter((user) => user.socketId !== this.socketId);
+					users = info.users.filter((user) => user.socketId !== this.socketId);
+					this.updateCursors.next(users);
+					break;
+				case 'pos':
+					users = info.users.filter((user) => user.socketId !== this.socketId);
+					this.updateCursors.next(users);
 					console.log(users);
 					break;
 				case 'left':
 					console.log(msg, info.user);
+					this.userLeft.next(info.user);
 					break;
 			}
 		});
