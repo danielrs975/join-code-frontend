@@ -27,15 +27,27 @@ export class Operation {
 		this.doc = doc;
 	}
 
-	static applyOperation(op, doc) {
+	// This method is going to apply the operation to the
+	// editor that is shown to the user.
+	static applyOperation(operation, cm) {
 		// const op = ot.TextOperation.fromJSON(operation);
 		// console.log(op);
-		try {
-			doc.content = op.apply(doc.content);
-		} catch (e) {
-			console.log(e);
-		}
-		return doc;
+		let cursor = 0;
+		cm.operation(() => {
+			operation.ops.forEach((op) => {
+				if (ot.TextOperation.isRetain(op)) {
+					cursor += op;
+				} else if (ot.TextOperation.isInsert(op)) {
+					cm.replaceRange(op, cm.posFromIndex(cursor));
+					cursor += op.length;
+				} else if (ot.TextOperation.isDelete(op)) {
+					let from = cm.posFromIndex(cursor);
+					let to = cm.posFromIndex(cursor - op);
+					cm.replaceRange('', from, to);
+				}
+			});
+		});
+		// console.log(operation, cm);
 	}
 
 	createOperation() {

@@ -32,23 +32,25 @@ export class CodeDocumentComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this._documentService.join(this.docId);
 		this.documentForm = this.fb.group({
 			content: [ '' ]
 		});
 
 		// Listen to updates in the document
 		this._documentService.docUpdated.subscribe((document) => this.documentForm.patchValue(document));
+		this._documentService.opFromServer.subscribe((operation) => Operation.applyOperation(operation, this.cm));
 	}
 
 	ngAfterViewInit(): void {
 		this.cm = this.codeEditor.codeMirror;
 		this.cm.on('changes', (_, changes) => {
 			// Ignore the event when is the type of setValue
-			if (changes[0].origin == 'setValue') return;
+			if (changes[0].origin == 'setValue' || !changes[0].origin) return;
 			const operation = new Operation(changes[0], this.documentForm.value.content).createOperation();
 			const version = this._documentService.version;
 			this._documentService.sendOperation(operation.toJSON(), this.docId, version);
 		});
+		// I'll join the document when all the view is charge
+		this._documentService.join(this.docId, this.cm.getCursor());
 	}
 }

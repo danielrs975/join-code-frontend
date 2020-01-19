@@ -10,6 +10,7 @@ export class DocumentService {
 	// Subjects to emit events
 	docUpdated = new Subject();
 	notifications = new Subject();
+	opFromServer = new Subject();
 
 	// The version is really important for the algorithm
 	// We are going to get it from the document when we join
@@ -26,15 +27,16 @@ export class DocumentService {
 		// Run the listeners of the doc
 		this.onReceiveOperation();
 		this.onNotifications();
-		this.expOnReceiveOperation();
+		this.onChangeVersion();
 	}
 
-	join(docId: string) {
-		this.socket.emit('join', { docId }, ({ err, socketId, doc }) => {
+	join(docId: string, cursorPos: any) {
+		this.socket.emit('join', { docId, cursorPos }, ({ err, socketId, doc, users }) => {
 			if (err) console.log(err);
 			this.socketId = socketId;
 			this.version = doc.version;
 			this.docUpdated.next(doc);
+			console.log(users);
 		});
 	}
 
@@ -84,26 +86,30 @@ export class DocumentService {
 	 * of the server. But we are receiving for now the doc complete.
 	 * We are going to try improve sending only the operation.
 	 */
-	private onReceiveOperation() {
-		this.socket.on('operation', (doc) => {
-			console.log(doc);
+	private onChangeVersion() {
+		this.socket.on('changeVersion', (doc) => {
 			this.version = doc.version;
-			this.docUpdated.next(doc);
+			// this.docUpdated.next(doc);
 		});
 	}
 
 	/**
 	 * Experimental on Receive operation
 	 */
-	private expOnReceiveOperation() {
-		this.socket.on('experimentalOp', (operation) => {
+	private onReceiveOperation() {
+		this.socket.on('operation', (operation) => {
 			operation = ot.TextOperation.fromJSON(operation);
+
 			this.waitingAkn =
 				this.waitingAkn ? ot.TextOperation.fromJSON(this.waitingAkn) :
 				undefined;
-			// console.log(operation, this.waitingAkn);
 			let transform1;
 			let transform2;
+			// We check is we have any operation waiting for aknowledgment
+			// If not we apply the operation directly to the document
+			// If yes then we have a document that has conflicts we transform the operation
+			// coming with the operation already applied to the doc and merge the document
+			// We also have to transform the operation that is in the buffer.
 			if (this.waitingAkn) {
 				transform1 = ot.TextOperation.transform(this.waitingAkn, operation);
 				if (this.buffer) transform2 = ot.TextOperation.transform(this.buffer, transform1[1]);
@@ -111,8 +117,11 @@ export class DocumentService {
 				this.buffer =
 					transform2 ? transform2[0] :
 					undefined;
+				operation =
+					transform2 ? transform2[1] :
+					transform1[1];
 			}
-			console.log(this.waitingAkn);
+			this.opFromServer.next(operation);
 		});
 	}
 
@@ -121,8 +130,16 @@ export class DocumentService {
 	 * like user entering or leaving the document
 	 */
 	private onNotifications() {
-		this.socket.on('notification', (msg) => {
-			console.log(msg);
+		this.socket.on('notification', ({ type, msg, info }) => {
+			switch (type) {
+				case 'join':
+					const users = info.users.filter((user) => user.socketId !== this.socketId);
+					console.log(users);
+					break;
+				case 'left':
+					console.log(msg, info.user);
+					break;
+			}
 		});
 	}
 }
