@@ -1,0 +1,17 @@
+.other-client {
+	animation-iteration-count: infinite;
+	animation-name: blink;
+	animation-duration: 1s;
+}
+
+@keyframes blink {
+	0% {
+		visibility: visible;
+	}
+	50% {
+		visibility: hidden;
+	}
+	100% {
+		visibility: visible;
+	}
+}

@@ -3,97 +3,106 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { DocumentService } from 'src/app/services/document.service';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ActivatedRoute } from '@angular/router';
-import { debounceTime } from 'rxjs/operators';
+import { Operation } from 'src/app/utils/ot';
 
 @Component({
-  selector: 'app-code-document',
-  templateUrl: './code-document.component.html',
-  styleUrls: ['./code-document.component.scss']
+	selector: 'app-code-document',
+	templateUrl: './code-document.component.html',
+	styleUrls: [ './code-document.component.scss' ]
 })
 export class CodeDocumentComponent implements OnInit {
-  
-  // We see the text editor to get the position of the cursor
-  @ViewChild(CodemirrorComponent, {read: '', static: true}) codeEditor: CodemirrorComponent;
+	// We see the text editor to get the position of the cursor
+	@ViewChild(CodemirrorComponent, { read: '', static: true })
+	codeEditor: CodemirrorComponent;
 
-  // This is the form of the document
-  documentForm: FormGroup
-  cm: any; // This is the instance of the code editor
+	// This is the form of the document
+	documentForm: FormGroup;
+	cm: any; // This is the instance of the code editor
 
-  // Seeing how it works
-  markers: any = {};
+	docId; // The id of the document open
+	cursors: any = {}; // It is an object with all the users cursor position
 
-  constructor(
-    private fb: FormBuilder,
-    private _documentService: DocumentService,
-    private _activatedRoute: ActivatedRoute
-  ) { }
+	constructor(
+		private fb: FormBuilder,
+		private _documentService: DocumentService,
+		private _activatedRoute: ActivatedRoute
+	) {
+		this.docId = this._activatedRoute.snapshot.params.id;
+	}
 
-  ngOnInit() {
-    // First a join the document
-    this._documentService.join(this._activatedRoute.snapshot.params.id);
+	ngOnInit() {
+		this.documentForm = this.fb.group({
+			content: [ '' ]
+		});
 
-    // Initialization of the document
-    this.documentForm = this.fb.group({
-      _id: [this._activatedRoute.snapshot.params.id],
-      modifyAt: [],
-      content: ['']
-    })
+		// Listen to updates in the document
+		this._documentService.docUpdated.subscribe((document) => this.documentForm.patchValue(document));
+		this._documentService.opFromServer.subscribe((operation) => Operation.applyOperation(operation, this.cm));
+		this._documentService.updateCursors.subscribe((users) => this.updateCursors(users));
+		this._documentService.userLeft.subscribe((user) => this.removeUser(user));
+	}
 
-    // In here we listen when a document changes
-    this._documentService.listenUpdates().pipe(
-      debounceTime(50)
-    ).subscribe((doc) => {
-      if (this.cm) {
-        const realCoords = this.cm.getCursor();
-        this.documentForm.patchValue(doc, { emitEvent: false });
-        this.cm.setCursor(realCoords);
-      }
-      this.documentForm.patchValue(doc, { emitEvent: false });
-    });
-    this.documentForm.valueChanges.subscribe((value) => this.saveDocument(value));
- 
-  }
-  /**
-   * This function save the document in the database
-   * @param value The new content of the document
-   */
-  saveDocument(value) {
-    this._documentService.save(value);
-  }
+	ngAfterViewInit(): void {
+		this.cm = this.codeEditor.codeMirror;
+		this.cm.on('changes', (_, changes) => {
+			// Ignore the event when is the type of setValue
+			if (changes[0].origin == 'setValue' || !changes[0].origin) return;
+			const operation = new Operation(changes[0], this.documentForm.value.content).createOperation();
+			const version = this._documentService.version;
+			this._documentService.sendOperation(operation.toJSON(), this.docId, version, this.cm.getCursor());
+		});
+		// I'll join the document when all the view is charge
+		this._documentService.join(this.docId, this.cm.getCursor());
+	}
 
-  ngAfterViewInit(): void {
-    this.cm = this.codeEditor.codeMirror;
-  }
+	/**
+	 * This method update all the user's cursor position in the
+	 * document
+	 * @param users The user to update it cursor position
+	 */
+	private updateCursors(users) {
+		users.forEach((user) => {
+			this.addCursor(user);
+		});
+	}
 
-  
+	/**
+	 * This method add a cursor to the text editor
+	 * @param user The new user to add to the document
+	 */
+	private addCursor(user: any) {
+		let color;
+		if (this.cursors[user.socketId]) {
+			color = this.cursors[user.socketId].color;
+			this.cursors[user.socketId].cursor.clear();
+		} else {
+			this.cursors[user.socketId] = {};
+			color = '#' + ((Math.random() * 0xffffff) << 0).toString(16);
+			this.cursors[user.socketId]['color'] = color;
+		}
+		let cursorPos = this.cm.posFromIndex(user.cursorPos);
+		let cursorCoords = this.cm.cursorCoords(user.cursorPos);
+		let newCursor = document.createElement('span');
+		newCursor.className = 'other-client';
+		// newCursor.style.animation = 'blink 0.5s infinite';
+		newCursor.style.display = 'inline-block';
+		newCursor.style.padding = '0';
+		newCursor.style.marginLeft = newCursor.style.marginRight = '-1px';
+		newCursor.style.borderLeftWidth = '2px';
+		newCursor.style.borderLeftStyle = 'solid';
+		newCursor.style.borderLeftColor = color;
+		newCursor.style.height = (cursorCoords.bottom - cursorCoords.top) * 0.9 + 'px';
+		newCursor.style.zIndex = '0';
+		newCursor.setAttribute('data-clientid', user.socketId);
 
-  /**
-   * In here we update the position of the cursor of a user
-   * with a given id
-   * @param coords The new coords of a user
-   * @param id The id of the user
-   */
-  // private setUserCursor(user, coords) {
-  //   // console.log(user, coords);
-  //   if (this.markers[user.socket_id]) this.markers[user.socket_id].clear();
-  //   // cm: CodeMirror instance
-  //   // cursorPos: The position of the cursor sent from another client ({line, ch} about CodeMirror)
-    
-  //   // Generate DOM node (marker / design you want to display)
-  //   const cursorCoords = this.cm.cursorCoords(true, coords);
-  //   // console.log(cursorCoords);
-  //   const cursorElement = document.createElement('span');
-  //   // console.log(cursorElement);
-  //   cursorElement.style.borderLeftStyle = 'solid';
-  //   cursorElement.style.borderLeftWidth = '1px';
-  //   cursorElement.style.borderLeftColor = '#ff0000';
-  //   cursorElement.style.height = `${(cursorCoords.bottom - cursorCoords.top)}px`;
-  //   cursorElement.style.padding = '0';
-  //   cursorElement.style.zIndex = '0';
-    
-  //   // Set the generated DOM node at the position of the cursor sent from another client
-  //   // setBookmark first argument: The position of the cursor sent from another client
-  //   // Second argument widget: Generated DOM node
-  //   this.markers[user.socket_id] = this.cm.setBookmark(coords, { widget: cursorElement });
-  // }
+		this.cursors[user.socketId].cursor = this.cm.setBookmark(user.cursorPos, {
+			widget: newCursor,
+			insertLeft: true
+		});
+	}
+
+	private removeUser(user: any) {
+		this.cursors[user.socketId].cursor.clear();
+		delete this.cursors[user.socketId];
+	}
 }
