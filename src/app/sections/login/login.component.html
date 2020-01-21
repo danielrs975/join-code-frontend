@@ -1,0 +1,21 @@
+
+       <div class="contain">
+            <div class="main">
+                <h2>Join Code</h2>
+                <div class="form">
+            
+                    <form [formGroup]="loginForm" class="login">
+                        <p>Email</p>
+                        <input type="email" name="email" placeholder="Enter email" formControlName="email"> 
+                        <p>Password</p>
+                        <input type="password" name="password" placeholder="Enter password" formControlName="password"> 
+                        <input type="button" value="Log in">         
+                    </form>
+                   <a [routerLink]="['/signup']">Creat account</a>
+            
+            
+                </div>
+                
+            
+            </div>
+        </div>

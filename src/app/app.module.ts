@@ -16,13 +16,17 @@ import { CodeDocumentComponent } from './sections/code-area/code-document/code-d
 // Routes
 import { AppRoutingModule } from './routes/app.routes';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './sections/login/login.component';
+import { SignUpComponent } from './sections/sign-up/sign-up.component';
 
 const config: SocketIoConfig = { url: environment.socketServer, options: {}};
 
 @NgModule({
   declarations: [
     AppComponent,
-    CodeDocumentComponent
+    CodeDocumentComponent,
+    LoginComponent,
+    SignUpComponent,
   ],
   imports: [
     BrowserModule,
