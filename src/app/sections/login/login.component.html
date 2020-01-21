@@ -4,18 +4,15 @@
                 <h2>Join Code</h2>
                 <div class="form">
             
-                    <form [formGroup]="loginForm" class="login">
+                    <form [formGroup]="loginForm" class="login" (ngSubmit)="onSubmit(loginForm.value)">
                         <p>Email</p>
-                        <input type="email" name="email" placeholder="Enter email" formControlName="email"> 
+                        <input type="email" name="email" placeholder="Enter email" formControlName="email" autocomplete="off"> 
                         <p>Password</p>
-                        <input type="password" name="password" placeholder="Enter password" formControlName="password"> 
-                        <input type="button" value="Log in">         
+                        <input type="password" name="password" placeholder="Enter password" formControlName="password" autocomplete="off"> 
+                        <button type="submit">Login</button>
                     </form>
-                   <a [routerLink]="['/signup']">Creat account</a>
-            
-            
+                   <a [routerLink]="['/signup']">Create account</a>
                 </div>
-                
             
             </div>
         </div>
