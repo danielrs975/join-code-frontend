@@ -1,0 +1,51 @@
+// $maincolor: #acbbdd;
+$maincolor:grey;
+$header-fontsize: 25px;
+$subheader-fontsize:16px;
+
+.main{
+    background-color: $maincolor;
+    height: 500px;
+    width: 400px;
+    margin: 70px auto;
+}
+h2{
+    margin: 0;
+    padding: 0 0 20 px;
+    text-align: center;
+    font-size: $header-fontsize;
+}
+// .header{
+//     background-color: violet;
+//     height: 70px;
+//     width: 400px;
+//     font-weight: bolder;
+//     font-size: $header-fontsize;
+//     // border: 2px solid black;
+//    // padding: 1px;
+//     text-align: center;
+//     box-sizing: border-box;
+// }
+.form{
+    background-color: grey;
+    width: 400px;
+    height: 470px;
+    // padding: 40px 100px;
+    font-size: $subheader-fontsize;
+    align-items: center;
+    box-sizing: border-box;
+}
+.login{
+    max-width: 200px;
+    margin: 20px auto;
+    padding:10px
+}
+label{
+    display: block;
+}
+input{
+    display: block;
+}
+a{
+    align-items: center;
+}
