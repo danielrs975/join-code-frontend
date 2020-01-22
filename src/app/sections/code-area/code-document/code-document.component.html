@@ -1,14 +1,23 @@
 <div class="flex-container">
-    <div style="width:200px;">qlq</div>
+    <div class="sidebar">
+        <p class="user-name">USER</p>
+        <p class="document">Current document</p>
+        <p class="users">Users conected</p>
+        <ul>
+            <li>first</li>
+            <li>second</li>
+        </ul>
+        <p class="bottom">Owner: name</p>
+    </div>
 
-    <div>
+    <div class="editing">
         <div id="code-editor" [formGroup]="documentForm">
             <ngx-codemirror
                 id="editor"
                 formControlName="content"
                 [options]="{
                     lineNumbers: true,
-                    theme: 'material',
+                    theme: 'icecoder',
                     mode: markdown
                 }"
             ></ngx-codemirror>

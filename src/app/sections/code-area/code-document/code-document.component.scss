@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+JP&display=swap');
 .other-client {
 	animation-iteration-count: infinite;
 	animation-name: blink;
@@ -15,6 +16,7 @@
 		visibility: visible;
 	}
 }
+
 .flex-container {
 	display: flex;
 }
@@ -37,6 +39,66 @@
 
 .code-editor {
 	height: 50%;
+	background-color: #2d2d2d;
+	padding: 8px;
+	flex: 1 auto;
+	font-family: 'Noto Sans JP', sans-serif;
+	color: #adadad;
+}
+
+.editing {
+	padding-left: 0px !important;
+}
+
+.terminal {
+	height: 50vh;
+	background-color: #2d2d2d !important;
+}
+
+.code-editor {
+	height: 50vh;
+}
+
+.sidebar {
+	width: 200px;
+	border-left: 1px solid #adadad !important;
+	border-right: 1px solid #adadad !important;
+}
+
+.user-name {
+	margin-bottom: 0;
+	font-weight: bold;
+	padding: 10px;
+	text-transform: uppercase;
+	border-bottom: 2px solid #adadad;
+}
+
+.document {
+	background-color: #1d1d1b;
+	padding: 10px;
+	margin: 0;
+	font-weight: bold;
+}
+
+.users {
+	margin-left: 10px;
+}
+
+ul {
+	list-style-type: none;
+}
+
+li {
+	padding: 5px;
+	padding-left: 10px;
+	border: 1px solid #dddddd;
+	border-left: none;
+	border-right: none;
+}
+
+.bottom {
+	position: fixed;
+	bottom: 5px;
 }
 
 //534F50
