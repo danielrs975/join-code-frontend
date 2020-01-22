@@ -39,6 +39,10 @@ export class UsersService {
 		return this.http.get(this.apiUrls.profile, { headers });
 	}
 
+	/**
+	 * This method gets the documents associated to a user. Documents owned by it
+	 * and share with it
+	 */
 	getDocuments() {
 		const headers = getHeaders(this.auth.getToken());
 		return this.http.get(this.apiUrls.documents, { headers });
