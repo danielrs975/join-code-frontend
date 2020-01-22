@@ -10,11 +10,18 @@ import { AuthService } from './auth.service';
 })
 export class UsersService {
 	private apiUrls = {
-		signup: `${environment.apiServer}users/signup`
+		signup: `${environment.apiServer}users/signup`,
+		profile: `${environment.apiServer}users/me/profile`,
+		documents: `${environment.apiServer}users/me/documents`,
+		getUser: `${environment.apiServer}users`
 	};
 
 	constructor(private http: HttpClient, private auth: AuthService) {}
 
+	/**
+	 * This method send a request to the api to create a new user
+	 * @param form The values to create a new user
+	 */
 	signup(form) {
 		const headers = getHeaders();
 		const body = form;
@@ -23,5 +30,28 @@ export class UsersService {
 				this.auth.saveToken(response['token']);
 			})
 		);
+	}
+
+	/**
+	 * This method gets the basic information of the user currently logged
+	 */
+	getProfile() {
+		const headers = getHeaders(this.auth.getToken());
+		return this.http.get(this.apiUrls.profile, { headers });
+	}
+
+	/**
+	 * This method gets the documents associated to a user. Documents owned by it
+	 * and share with it
+	 */
+	getDocuments() {
+		const headers = getHeaders(this.auth.getToken());
+		return this.http.get(this.apiUrls.documents, { headers });
+	}
+
+	getUserId(email: string) {
+		const headers = getHeaders(this.auth.getToken());
+		const query = { email };
+		return this.http.get(this.apiUrls.getUser, { headers, params: query });
 	}
 }

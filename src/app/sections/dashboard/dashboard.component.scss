@@ -1,0 +1,97 @@
+.user{
+    margin: 0;
+    background-color: #2D2D2D;
+    font-weight: bold;
+    padding: 30px 30px 0px;
+    text-transform: uppercase;
+    font-family:'Noto Sans JP', sans-serif;
+    color: #ADADAD;
+    text-align: right;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-rows: 10% 40% 10% 40%;
+    background-color: #2D2D2D;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family:'Noto Sans JP', sans-serif;
+    color: #ADADAD;
+}
+
+.flex-container {
+    display: flex;
+}
+
+.flex-container-div {
+    background-color: #333333;
+    padding: 8px;
+    flex-basis: 150px;
+    height: 150px;
+    margin: 5px;
+}
+
+.section {
+    height: 38px;
+    padding: 10px;
+    font-weight: bold;
+    font-size: large;
+    border-bottom: 2px solid #ADADAD;
+    margin: 0;
+}
+
+.box{
+    position: relative;
+}
+
+.center{
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.button-one{
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.2s;
+    background-color: #ADADAD;
+    border: none;
+    height: 100%;
+    width: 100%;
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.button-one:hover {
+    background-color: #2D2D2D;
+    color: #ADADAD;
+}
+
+.btn-outline-success{
+    border-color: #00A99D;
+    color: #00A99D;
+}
+
+.btn-outline-success:hover {
+    background-color: #00A99D;
+    color: white;
+}
+
+.share{
+    border-color: transparent;
+    color: #AEE9E4;
+    position: absolute;
+    bottom: 4px;
+    margin-left: 50%;
+}
+
+.modal-dialog{
+    background-color: #ADADAD;
+    color: #2D2D2D;
+}
+
+.modal-footer{
+    border:none;
+}
