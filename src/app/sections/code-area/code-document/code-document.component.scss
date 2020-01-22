@@ -15,3 +15,36 @@
 		visibility: visible;
 	}
 }
+.flex-container {
+	display: flex;
+}
+
+.flex-container > div {
+	background-color: #1c1618;
+	padding: 8px;
+	flex: 1 auto;
+}
+
+.terminal {
+	height: 50%;
+	background-color: #1c1618 !important;
+}
+
+.CodeMirror,
+.cm-s-material {
+	background-color: #1c1618 !important;
+}
+
+.code-editor {
+	height: 50%;
+}
+
+//534F50
+
+/*
+.CodeMirror-scroll, .CodeMirror-sizer, .CodeMirror-gutter, .CodeMirror-gutters, .CodeMirror-linenumber {
+    width: 50vw !important;
+    height: 400px;
+
+}  
+*/
