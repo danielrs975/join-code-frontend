@@ -1,13 +1,18 @@
-<div class="flex-container">
+<div class="flex-container" style="background-color: #2D2D2D">
     <div class="sidebar">
-        <p class="user-name">USER</p>
+        <div class="user-name">
+            <div style="margin-bottom:10px;">USER</div>
+            <button class="btn btn-outline-success btn-sm" style="margin-right: 10px;">Log out</button>
+        </div>
         <p class="document">Current document</p>
-        <p class="users">Users conected</p>
-        <ul>
-            <li>first</li>
-            <li>second</li>
+        <p class="users">Shared with:</p>
+        <ul> <!-- AQUI VA EL FOR DE LOS USARIOS -->
+            <!-- AQUI VA UN IF QUE NI IDEA DE COMO SE HACE DE SI EL USER ESTA CONECTADO O NO -->
+            <li class="conected-user">conectado</li>
+            <li class="disconected-user">no conectado</li>
         </ul>
-        <p class="bottom">Owner: name</p>
+        <p class="bottom1">Last updated by: name</p>
+        <p class="bottom2">Owner: name</p>
     </div>
 
     <div class="editing">

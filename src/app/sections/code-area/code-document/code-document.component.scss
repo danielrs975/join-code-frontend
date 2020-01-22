@@ -18,31 +18,32 @@
 
 .flex-container {
 	display: flex;
+	height: 100vh;
+	background-color: #2d2d2d !important;
+	font-family: 'Noto Sans JP', sans-serif !important;
+	color: #adadad !important;
 }
 
-.flex-container > div {
-	background-color: #1c1618;
+.flex-container-div {
+	background-color: #2d2d2d;
 	padding: 8px;
-	flex: 1 auto;
+	height: 100vh;
+	flex-basis: 200px;
+}
+
+.editing {
+	padding-left: 0px !important;
+	flex: 1;
 }
 
 .terminal {
 	height: 50%;
-	background-color: #1c1618 !important;
-}
-
-.CodeMirror,
-.cm-s-material {
-	background-color: #1c1618 !important;
+	background-color: #2d2d2d !important;
 }
 
 .code-editor {
-	height: 50%;
-	background-color: #2d2d2d;
-	padding: 8px;
-	flex: 1 auto;
-	font-family: 'Noto Sans JP', sans-serif;
-	color: #adadad;
+	height: 285px !important;
+	width: 80vw;
 }
 
 .editing {
@@ -54,8 +55,12 @@
 	background-color: #2d2d2d !important;
 }
 
-.code-editor {
-	height: 50vh;
+.document {
+	background-color: #1d1d1b;
+	padding: 10px;
+	margin: 0;
+	margin-bottom: 10px;
+	font-weight: bold;
 }
 
 .sidebar {
@@ -85,6 +90,39 @@
 
 ul {
 	list-style-type: none;
+}
+
+li {
+	padding: 5px;
+	padding-left: 10px;
+	border: none;
+}
+
+.conected-user {
+	background-color: rgb(95, 95, 95);
+	color: #aee9e4;
+}
+
+.bottom1 {
+	position: fixed;
+	bottom: 40px;
+	margin-left: 15px;
+}
+
+.bottom2 {
+	position: fixed;
+	bottom: 5px;
+	margin-left: 15px;
+}
+
+.btn-outline-success {
+	border-color: #00a99d;
+	color: #00a99d;
+}
+
+.btn-outline-success:hover {
+	background-color: #00a99d;
+	color: white;
 }
 
 li {

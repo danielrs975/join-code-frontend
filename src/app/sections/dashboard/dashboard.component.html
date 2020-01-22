@@ -1,20 +1,64 @@
-<div *ngIf="userLogged" class="user-name">{{userLogged.name}}</div>
+<div class="user">
+    <button class="btn btn-outline-success btn-sm" style="margin-right: 10px;">Log out</button>
+    {{user.user_name}}
+</div>
 <div class="grid-container" style="height:100vh;">
     <p class="section">Your files</p>
     <div class="flex-container">
-        <div class="box">
-            <button class="button center">+</button>
+        <div class="flex-container-div box">
+            <button class="button-one center" data-toggle="modal" data-target="#myModal">+</button>
         </div>
-        <div class="box"><p class="center">File1</p></div>
-        <div class="box"><p class="center">File2</p></div>
-        <div class="box"><p class="center">File3</p></div>
+
+        <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <p>NEW FILE</p>
+                    <p style="margin-bottom: 0rem;">Name:</p>
+                    <input id="new_name" type="text">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-success" data-dismiss="modal">Save</button>
+                </div>
+            </div>
+
+        </div>
+        </div>
+        
+        <div class="flex-container-div box" *ngFor="let doc of docs" (click)="open_doc(doc.id)">
+            <p class="center">{{doc.nombre}}</p>
+            <button class="btn btn-outline-success btn-sm share" data-toggle="modal" data-target="#share">Share</button>
+        </div>
+        
+        <div id="share" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+        
+                <div class="modal-content">
+        
+                    <div class="modal-body">
+                        <p>SHARE WITH OTHERS</p>
+                        <p style="margin-bottom: 0rem;">Users:</p>
+                        <input id="user" type="text">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-outline-success" data-dismiss="modal">Share</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
         
     <p class="section">Shared with you</p>
     <div class="flex-container">
-        <div class="box"><p class="center">File1</div>
-        <div class="box"><p class="center">File2</div>
-        <div class="box"><p class="center">File3</div>
-        <div class="box"><p class="center">File4</div>
+        <div class="flex-container-div box">
+            <p class="center">File1</p>
+        </div>
+        <div class="flex-container-div box"><p class="center">File2</div>
+        <div class="flex-container-div box"><p class="center">File3</div>
+        <div class="flex-container-div box"><p class="center">File4</div>
     </div>
 </div>
