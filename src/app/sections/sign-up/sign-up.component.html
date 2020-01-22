@@ -4,14 +4,14 @@
             <h2>Join Code</h2>
             <div class="form">
         
-                <form [formGroup]="signinForm" class="signin">
+                <form [formGroup]="signupForm" class="signin" (ngSubmit)="onSubmit(signupForm.value)">
                     <p>Name</p>
                     <input type="name" name="name" placeholder="Enter name" formControlName="name"> 
                     <p>Email</p>
                     <input type="email" name="email" placeholder="Enter email" formControlName="email"> 
                     <p>Password</p>
                     <input type="password" name="password" placeholder="Enter password" formControlName="password"> 
-                    <input type="button" value="Submit">         
+                    <button type="submit">Submit</button>   
                 </form>
                
         
