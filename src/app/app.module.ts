@@ -35,7 +35,8 @@ const config: SocketIoConfig = { url: environment.socketServer, options: {} };
 			AppRoutingModule,
 			CodemirrorModule,
 			ReactiveFormsModule,
-			NgTerminalModule
+			NgTerminalModule,
+			HttpClientModule
 		],
 	providers: [],
 	bootstrap: [ AppComponent ]

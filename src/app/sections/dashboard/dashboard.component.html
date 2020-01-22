@@ -1,4 +1,4 @@
-<div class="user-name">USER</div>
+<div *ngIf="userLogged" class="user-name">{{userLogged.name}}</div>
 <div class="grid-container" style="height:100vh;">
     <p class="section">Your files</p>
     <div class="flex-container">

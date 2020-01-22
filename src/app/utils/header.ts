@@ -1,10 +1,10 @@
 import { HttpHeaders } from '@angular/common/http';
 
 function getHeaders(token?: string) {
-	const headers = new HttpHeaders({
+	let headers = new HttpHeaders({
 		'Content-Type': 'application/json'
 	});
-	if (token) headers.append('Authorization', `Bearer ${token}`);
+	if (token) headers = headers.append('Authorization', `Bearer ${token}`);
 	return headers;
 }
 export { getHeaders };
