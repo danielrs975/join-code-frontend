@@ -1,6 +1,6 @@
-<div class="user">
-    <button class="btn btn-outline-success btn-sm" style="margin-right: 10px;">Log out</button>
-    {{user.user_name}}
+<div *ngIf="userLogged" class="user">
+    <button class="btn btn-outline-success btn-sm" style="margin-right: 10px;" (click)="logOut()">Log out</button>
+    {{userLogged.name}}
 </div>
 <div class="grid-container" style="height:100vh;">
     <p class="section">Your files</p>
@@ -28,8 +28,8 @@
         </div>
         </div>
         
-        <div class="flex-container-div box" *ngFor="let doc of docs" (click)="open_doc(doc.id)">
-            <p class="center">{{doc.nombre}}</p>
+        <div class="flex-container-div box" *ngFor="let document of userDocuments" (click)="openDoc(document._id)">
+            <p class="center">{{document.name}}</p>
             <button class="btn btn-outline-success btn-sm share" data-toggle="modal" data-target="#share">Share</button>
         </div>
         
@@ -54,11 +54,8 @@
         
     <p class="section">Shared with you</p>
     <div class="flex-container">
-        <div class="flex-container-div box">
-            <p class="center">File1</p>
+        <div *ngFor="let document of sharedDocuments" class="flex-container-div box" (click)="openDoc(document._id)">
+            <p class="center">{{document.name}}</p>
         </div>
-        <div class="flex-container-div box"><p class="center">File2</div>
-        <div class="flex-container-div box"><p class="center">File3</div>
-        <div class="flex-container-div box"><p class="center">File4</div>
     </div>
 </div>
