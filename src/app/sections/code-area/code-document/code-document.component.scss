@@ -2,27 +2,32 @@
 
 .flex-container {
     display: flex;
+    height: 100vh;
+    background-color: #2D2D2D !important;
+    font-family:'Noto Sans JP', sans-serif !important;
+    color: #ADADAD !important;
 }
   
-.flex-container > div {
+.flex-container-div {
     background-color: #2D2D2D;
     padding: 8px;
-    flex: 1 auto;
-    font-family:'Noto Sans JP', sans-serif;
-    color: #ADADAD;
+    height: 100vh;
+    flex-basis: 200px;
 }
 
 .editing{
     padding-left: 0px !important;
+    flex: 1;
 }
 
 .terminal {
-    height: 50vh;
+    height: 50%;
     background-color: #2D2D2D !important;
 }
 
 .code-editor{
-    height: 50vh;
+    height: 285px !important;
+    width: 80vw;
 }
 
 .sidebar{
@@ -43,6 +48,7 @@
     background-color: #1d1d1b;
     padding: 10px;
     margin: 0;
+    margin-bottom:10px;
     font-weight: bold;
 }
 
@@ -57,14 +63,34 @@ ul{
 li {
     padding: 5px;
     padding-left: 10px;
-    border: 1px solid #DDDDDD;
-    border-left: none;
-    border-right: none; 
+    border: none;
 }
 
-.bottom{
+.conected-user {
+    background-color: rgb(95, 95, 95);
+    color: #AEE9E4;
+}
+
+.bottom1{
+    position: fixed;
+    bottom: 40px;
+    margin-left: 15px;
+}
+
+.bottom2{
     position: fixed;
     bottom: 5px;
+    margin-left: 15px;
+}
+
+.btn-outline-success{
+    border-color: #00A99D;
+    color: #00A99D;
+}
+
+.btn-outline-success:hover {
+    background-color: #00A99D;
+    color: white;
 }
 
 
