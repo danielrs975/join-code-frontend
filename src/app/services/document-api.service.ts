@@ -25,8 +25,7 @@ export class DocumentApiService {
 	create(form) {
 		const headers = getHeaders(this.auth.getToken());
 		const body = form;
-		console.log(form);
-		// return this.http.post(this.apiUrls.create, body, { headers });
+		return this.http.post(this.apiUrls.create, body, { headers });
 	}
 
 	/**
@@ -34,10 +33,9 @@ export class DocumentApiService {
    * @param users The users you want to share the documents
    * @param id The id of the document you want to share
    */
-	share(users, id: string) {
+	share(users, id: any) {
 		const headers = getHeaders(this.auth.getToken());
 		const body = { users };
-		console.log(body);
-		// return this.http.patch(`${this.apiUrls.share}/${id}/share`, body, { headers });
+		return this.http.patch(`${this.apiUrls.share}/${id}/share`, body, { headers });
 	}
 }

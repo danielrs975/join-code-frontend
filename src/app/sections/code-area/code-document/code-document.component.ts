@@ -2,8 +2,9 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { DocumentService } from 'src/app/services/document.service';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Operation } from 'src/app/utils/ot';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
 	selector: 'app-code-document',
@@ -21,11 +22,14 @@ export class CodeDocumentComponent implements OnInit {
 
 	docId; // The id of the document open
 	cursors: any = {}; // It is an object with all the users cursor position
+	document: any;
 
 	constructor(
 		private fb: FormBuilder,
 		private _documentService: DocumentService,
-		private _activatedRoute: ActivatedRoute
+		private _activatedRoute: ActivatedRoute,
+		private auth: AuthService,
+		private router: Router
 	) {
 		this.docId = this._activatedRoute.snapshot.params.id;
 	}
@@ -36,7 +40,10 @@ export class CodeDocumentComponent implements OnInit {
 		});
 
 		// Listen to updates in the document
-		this._documentService.docUpdated.subscribe((document) => this.documentForm.patchValue(document));
+		this._documentService.docUpdated.subscribe((document) => {
+			this.documentForm.patchValue(document);
+			this.document = document;
+		});
 		this._documentService.opFromServer.subscribe((operation) => Operation.applyOperation(operation, this.cm));
 		this._documentService.updateCursors.subscribe((users) => this.updateCursors(users));
 		this._documentService.userLeft.subscribe((user) => this.removeUser(user));
@@ -104,5 +111,13 @@ export class CodeDocumentComponent implements OnInit {
 	private removeUser(user: any) {
 		this.cursors[user.socketId].cursor.clear();
 		delete this.cursors[user.socketId];
+	}
+
+	/**
+	 * This method logout the user from the app
+	 */
+	logOut() {
+		this.auth.logout().subscribe((response) => console.log(response), (e) => console.log('Error has ocurred!', e));
+		this.router.navigate([ '/login' ]);
 	}
 }

@@ -2,17 +2,16 @@
     <div class="sidebar">
         <div class="user-name">
             <div style="margin-bottom:10px;">USER</div>
-            <button class="btn btn-outline-success btn-sm" style="margin-right: 10px;">Log out</button>
+            <button class="btn btn-outline-success btn-sm" style="margin-right: 10px;" (click)="logOut()">Log out</button>
         </div>
-        <p class="document">Current document</p>
+        <p *ngIf="document" class="document">{{document.name}}</p>
         <p class="users">Shared with:</p>
-        <ul> <!-- AQUI VA EL FOR DE LOS USARIOS -->
+        <ul *ngIf="document"> <!-- AQUI VA EL FOR DE LOS USARIOS -->
             <!-- AQUI VA UN IF QUE NI IDEA DE COMO SE HACE DE SI EL USER ESTA CONECTADO O NO -->
-            <li class="conected-user">conectado</li>
-            <li class="disconected-user">no conectado</li>
+            <li *ngFor="let user of document.users" class="conected-user">{{user.name}}</li>
         </ul>
         <p class="bottom1">Last updated by: name</p>
-        <p class="bottom2">Owner: name</p>
+        <p *ngIf="document" class="bottom2">Owner: {{document.owner.name}}</p>
     </div>
 
     <div class="editing">

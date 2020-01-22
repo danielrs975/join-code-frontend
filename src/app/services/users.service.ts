@@ -12,7 +12,8 @@ export class UsersService {
 	private apiUrls = {
 		signup: `${environment.apiServer}users/signup`,
 		profile: `${environment.apiServer}users/me/profile`,
-		documents: `${environment.apiServer}users/me/documents`
+		documents: `${environment.apiServer}users/me/documents`,
+		getUser: `${environment.apiServer}users`
 	};
 
 	constructor(private http: HttpClient, private auth: AuthService) {}
@@ -46,5 +47,11 @@ export class UsersService {
 	getDocuments() {
 		const headers = getHeaders(this.auth.getToken());
 		return this.http.get(this.apiUrls.documents, { headers });
+	}
+
+	getUserId(email: string) {
+		const headers = getHeaders(this.auth.getToken());
+		const query = { email };
+		return this.http.get(this.apiUrls.getUser, { headers, params: query });
 	}
 }
