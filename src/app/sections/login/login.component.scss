@@ -1,51 +1,77 @@
-// $maincolor: #acbbdd;
-$maincolor:grey;
-$header-fontsize: 25px;
-$subheader-fontsize:16px;
 
-.main{
+$maincolor:#B5B1B2;
+$buttoncolor:rgb(202, 94, 55);
+$formfontcolor:white;
+$header-fontsize: 32px;
+$form-fontsize:16px;
+$button-fontsize:18px;
+$label-fontsize:20px;
+.container{
+    background-color: #63605E;
+    width: 100%;
+    height: 800px;
+}
+.loginbox{
     background-color: $maincolor;
     height: 500px;
     width: 400px;
-    margin: 70px auto;
-}
-h2{
-    margin: 0;
-    padding: 0 0 20 px;
-    text-align: center;
-    font-size: $header-fontsize;
-}
-// .header{
-//     background-color: violet;
-//     height: 70px;
-//     width: 400px;
-//     font-weight: bolder;
-//     font-size: $header-fontsize;
-//     // border: 2px solid black;
-//    // padding: 1px;
-//     text-align: center;
-//     box-sizing: border-box;
-// }
-.form{
-    background-color: grey;
-    width: 400px;
-    height: 470px;
-    // padding: 40px 100px;
-    font-size: $subheader-fontsize;
-    align-items: center;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%,-50%);
     box-sizing: border-box;
+    padding: 50px 30px;
+    border-radius: 10px;
+   
 }
-.login{
-    max-width: 200px;
-    margin: 20px auto;
-    padding:10px
+h1{margin: 0;
+padding: 0 0 40px;
+text-align: center;
+font-size: $header-fontsize;
+line-height: 30px;
 }
-label{
-    display: block;
+.loginbox p{
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    font-size: $label-fontsize;
 }
-input{
-    display: block;
+.loginbox input{
+    width: 100%;
+    margin-bottom: 20px;
 }
-a{
+
+.loginbox input[type="email"], input[type="password"]
+{
+border:none;
+border-bottom: 1px solid #fff;
+background: transparent;
+outline: none;
+height: 40px;
+color: $formfontcolor;
+font-size: $form-fontsize;
+}
+.loginbox input[type="submit"] {
+    border: none;
+    outline: none;
+    height: 40px;
+    background-color: $buttoncolor;
+    color: $formfontcolor;
+    font-size: $button-fontsize;
+    border-radius: 20px;
+    }
+.loginbox input[type="submit"]:hover{
+cursor: pointer;
+background:rgb(230, 74, 17);
+color: #000;
+}
+.loginbox a{
+    text-decoration: none;
+    font-size: $form-fontsize;
+    line-height: 20px;
+    color: #eeffff;;
     align-items: center;
+   }
+.loginbox a:hover{
+   color:#ffc107; 
 }

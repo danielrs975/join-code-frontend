@@ -1,23 +1,17 @@
 
-       <div class="contain">
-        <div class="main">
-            <h2>Join Code</h2>
-            <div class="form">
-        
-                <form [formGroup]="signinForm" class="signin">
-                    <p>Name</p>
-                    <input type="name" name="name" placeholder="Enter name" formControlName="name"> 
-                    <p>Email</p>
-                    <input type="email" name="email" placeholder="Enter email" formControlName="email"> 
-                    <p>Password</p>
-                    <input type="password" name="password" placeholder="Enter password" formControlName="password"> 
-                    <input type="button" value="Submit">         
-                </form>
-               
-        
-        
-            </div>
-            
-        
-        </div>
-    </div>
+<div class="container">
+<div class="signupbox">
+    <form [formGroup]="signupForm" class="signup">
+        <p>Username</p>
+        <input type="username" name="username" placeholder="Enter username" formControlName="username"> 
+        <p>Email</p>
+        <input type="email" name="email" placeholder="Enter email" formControlName="email"> 
+        <p>Password</p>
+        <input type="password" name="password" placeholder="Enter password" formControlName="password"> <br>
+        <input type="submit" name="" value="Submit">  
+           
+    </form>
+</div>
+
+</div>
+
