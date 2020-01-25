@@ -33,9 +33,15 @@ export class DocumentService {
 		this.onChangeVersion();
 	}
 
-	join(docId: string, cursorPos: any) {
+	/**
+	 * This method allow the user to join a document and receives information
+	 * about the other users that are editing the document
+	 * @param docId The id of the doc we want to join
+	 * @param cursorPos The position of the cursor of the user that is join in
+	 */
+	join(docId: string, cursorPos: any, userInfo: any) {
 		this.socket.connect();
-		this.socket.emit('join', { docId, cursorPos }, ({ err, socketId, doc, users }) => {
+		this.socket.emit('join', { ...userInfo, docId, cursorPos }, ({ err, socketId, doc, users }) => {
 			if (err) console.log(err);
 			this.socketId = socketId;
 			this.version = doc.version;
@@ -88,8 +94,11 @@ export class DocumentService {
 		}, 5000);
 	}
 
+	/**
+	 * This method send a event to the back saying that
+	 * the user leaves the document
+	 */
 	leave() {
-		console.log('I am leaving the document');
 		this.socket.disconnect();
 	}
 

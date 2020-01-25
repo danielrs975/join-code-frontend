@@ -5,6 +5,7 @@ import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Operation } from 'src/app/utils/ot';
 import { AuthService } from 'src/app/services/auth.service';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
 	selector: 'app-code-document',
@@ -24,12 +25,17 @@ export class CodeDocumentComponent implements OnInit {
 	cursors: any = {}; // It is an object with all the users cursor position
 	document: any;
 
+	users: any;
+
+	profile: any;
+
 	constructor(
 		private fb: FormBuilder,
 		private _documentService: DocumentService,
 		private _activatedRoute: ActivatedRoute,
 		private auth: AuthService,
-		private router: Router
+		private router: Router,
+		private userService: UsersService
 	) {
 		this.docId = this._activatedRoute.snapshot.params.id;
 	}
@@ -43,10 +49,24 @@ export class CodeDocumentComponent implements OnInit {
 		this._documentService.docUpdated.subscribe((document) => {
 			this.documentForm.patchValue(document);
 			this.document = document;
+			this.users = document['users'].map((user) => {
+				return { ...user, connected: false };
+			});
+			this.users = this.users.filter((user) => user._id !== this.profile._id);
 		});
 		this._documentService.opFromServer.subscribe((operation) => Operation.applyOperation(operation, this.cm));
-		this._documentService.updateCursors.subscribe((users) => this.updateCursors(users));
-		this._documentService.userLeft.subscribe((user) => this.removeUser(user));
+		this._documentService.updateCursors.subscribe((users: any) => {
+			this.updateCursors(users);
+			this.users.forEach((user) => {
+				const isConnected = users.find((userConnected) => user._id === userConnected._id);
+				if (isConnected) user.connected = true; // In here we put who are the users that are connected
+			});
+		});
+		this._documentService.userLeft.subscribe((user) => {
+			this.removeUser(user);
+			const userDisconnected = this.users.find((userConnected) => userConnected._id === user['_id']);
+			userDisconnected.connected = false; // When a user left the document we put the its status as disconnected
+		});
 	}
 
 	ngAfterViewInit(): void {
@@ -59,7 +79,10 @@ export class CodeDocumentComponent implements OnInit {
 			this._documentService.sendOperation(operation.toJSON(), this.docId, version, this.cm.getCursor());
 		});
 		// I'll join the document when all the view is charge
-		this._documentService.join(this.docId, this.cm.getCursor());
+		this.userService.getProfile().subscribe((me) => {
+			this.profile = me;
+			this._documentService.join(this.docId, this.cm.getCursor(), this.profile);
+		});
 	}
 
 	ngOnDestroy(): void {
