@@ -34,6 +34,7 @@ export class DocumentService {
 	}
 
 	join(docId: string, cursorPos: any) {
+		this.socket.connect();
 		this.socket.emit('join', { docId, cursorPos }, ({ err, socketId, doc, users }) => {
 			if (err) console.log(err);
 			this.socketId = socketId;
@@ -85,6 +86,11 @@ export class DocumentService {
 				}
 			);
 		}, 5000);
+	}
+
+	leave() {
+		console.log('I am leaving the document');
+		this.socket.disconnect();
 	}
 
 	/**
@@ -146,10 +152,8 @@ export class DocumentService {
 				case 'pos':
 					users = info.users.filter((user) => user.socketId !== this.socketId);
 					this.updateCursors.next(users);
-					console.log(users);
 					break;
 				case 'left':
-					console.log(msg, info.user);
 					this.userLeft.next(info.user);
 					break;
 			}

@@ -49,6 +49,11 @@ export class UsersService {
 		return this.http.get(this.apiUrls.documents, { headers });
 	}
 
+	/**
+	 * This function allows the user get the id of another user
+	 * with the email
+	 * @param email The email of the user to search its ID
+	 */
 	getUserId(email: string) {
 		const headers = getHeaders(this.auth.getToken());
 		const query = { email };

@@ -62,6 +62,12 @@ export class CodeDocumentComponent implements OnInit {
 		this._documentService.join(this.docId, this.cm.getCursor());
 	}
 
+	ngOnDestroy(): void {
+		//Called once, before the instance is destroyed.
+		//Add 'implements OnDestroy' to the class.
+		this._documentService.leave();
+	}
+
 	/**
 	 * This method update all the user's cursor position in the
 	 * document
