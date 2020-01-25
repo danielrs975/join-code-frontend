@@ -1,18 +1,16 @@
-
-       <div class="contain">
-            <div class="main">
-                <h2>Join Code</h2>
-                <div class="form">
-            
-                    <form [formGroup]="loginForm" class="login" (ngSubmit)="onSubmit(loginForm.value)">
-                        <p>Email</p>
-                        <input type="email" name="email" placeholder="Enter email" formControlName="email" autocomplete="off"> 
-                        <p>Password</p>
-                        <input type="password" name="password" placeholder="Enter password" formControlName="password" autocomplete="off"> 
-                        <button type="submit">Login</button>
-                    </form>
-                   <a [routerLink]="['/signup']">Create account</a>
-                </div>
-            
-            </div>
-        </div>
+<div class="contain" style="background-color: #333333;">
+    <div class="main">
+        <h2>Join Code</h2>
+        <div class="form">
+          
+            <form [formGroup]="loginForm" class="login" (ngSubmit)="onSubmit(loginForm.value)">
+                <p style="margin-bottom: 0px;">Email</p>
+                <input type="email" name="email" placeholder="Enter email" formControlName="email" autocomplete="off" style="margin-bottom: 25px;"> 
+                <p style="margin-bottom: 0px;">Password</p>
+                <input type="password" name="password" placeholder="Enter password" formControlName="password" autocomplete="off" style="margin-bottom: 25px;"> 
+                <button class="btn btn-outline-success btn-sm" type="submit">Login</button>
+            </form>
+            <a [routerLink]="['/signup']" style="color:#333333; padding-left: 140px;">Create account</a>
+        </div>          
+    </div>
+</div>
