@@ -5,13 +5,13 @@
             <div class="form">
         
                 <form [formGroup]="signupForm" class="signin" (ngSubmit)="onSubmit(signupForm.value)">
-                    <p>Name</p>
-                    <input type="name" name="name" placeholder="Enter name" formControlName="name"> 
-                    <p>Email</p>
-                    <input type="email" name="email" placeholder="Enter email" formControlName="email"> 
-                    <p>Password</p>
-                    <input type="password" name="password" placeholder="Enter password" formControlName="password"> 
-                    <button type="submit">Submit</button>   
+                    <p style="margin-bottom: 0px;">Name</p>
+                    <input type="name" name="name" placeholder="Enter name" formControlName="name" style="margin-bottom: 25px;"> 
+                    <p style="margin-bottom: 0px;">Email</p>
+                    <input type="email" name="email" placeholder="Enter email" formControlName="email" style="margin-bottom: 25px;"> 
+                    <p style="margin-bottom: 0px;">Password</p>
+                    <input type="password" name="password" placeholder="Enter password" formControlName="password" style="margin-bottom: 25px;"> 
+                    <button type="submit" class="btn btn-outline-success btn-sm">Submit</button>   
                 </form>
                
         

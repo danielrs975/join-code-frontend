@@ -59,7 +59,6 @@
 	background-color: #1d1d1b;
 	padding: 10px;
 	margin: 0;
-	margin-bottom: 10px;
 	font-weight: bold;
 }
 
@@ -74,7 +73,6 @@
 	font-weight: bold;
 	padding: 10px;
 	text-transform: uppercase;
-	border-bottom: 2px solid #adadad;
 }
 
 .document {
@@ -82,10 +80,12 @@
 	padding: 10px;
 	margin: 0;
 	font-weight: bold;
+	border-top: 2px solid #adadad;
+	border-bottom: 2px solid #adadad;
 }
 
 .users {
-	margin-left: 10px;
+	margin: 10px;
 }
 
 ul {
@@ -103,6 +103,10 @@ li {
 	color: #aee9e4;
 }
 
+.btn{
+	margin-right: 6px; 
+}
+
 .bottom1 {
 	position: fixed;
 	bottom: 40px;
@@ -115,13 +119,23 @@ li {
 	margin-left: 15px;
 }
 
-.btn-outline-success {
+.btn-outline-primary {
 	border-color: #00a99d;
 	color: #00a99d;
 }
 
-.btn-outline-success:hover {
+.btn-outline-primary:hover {
 	background-color: #00a99d;
+	color: white;
+}
+
+.btn-outline-danger {
+	border-color: #FF2C2D;
+	color: #FF2C2D;
+}
+
+.btn-outline-danger:hover {
+	background-color: #FF2C2D;
 	color: white;
 }
 

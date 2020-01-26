@@ -1,51 +1,79 @@
-// $maincolor: #acbbdd;
-$maincolor:grey;
-$header-fontsize: 25px;
-$subheader-fontsize:16px;
+.contain{
+    background-color: #333333;
+    height: 100vh;
+    font-family:'Noto Sans JP', sans-serif;
+}
 
 .main{
-    background-color: $maincolor;
     height: 500px;
     width: 400px;
-    margin: 70px auto;
+    margin: auto;
+    padding-top: 100px;
 }
+
 h2{
     margin: 0;
-    padding: 0 0 20 px;
+    padding-top: 30px;
+    padding-bottom: 30px;
     text-align: center;
-    font-size: $header-fontsize;
+    font-size: 25px;
+    background-color: #ADADAD;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
-// .header{
-//     background-color: violet;
-//     height: 70px;
-//     width: 400px;
-//     font-weight: bolder;
-//     font-size: $header-fontsize;
-//     // border: 2px solid black;
-//    // padding: 1px;
-//     text-align: center;
-//     box-sizing: border-box;
-// }
+
 .form{
-    background-color: grey;
+    background-color: #ADADAD;
     width: 400px;
-    height: 470px;
-    // padding: 40px 100px;
-    font-size: $subheader-fontsize;
+    height: 300px;
+    font-size: 16px;
     align-items: center;
     box-sizing: border-box;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
+
 .login{
-    max-width: 200px;
-    margin: 20px auto;
-    padding:10px
+    padding:10px;
 }
+
 label{
     display: block;
 }
+
 input{
     display: block;
+    border:none;
+    border-bottom: 1px solid #fff;
+    background: transparent;
+    outline: none;
+    height: 40px;
 }
+
+.loginbox input{
+    width: 100%;
+    margin-bottom: 20px;
+}
+
 a{
-    align-items: center;
+    text-align: center;
+    display:block;
+}
+
+.btn{
+    margin:0 auto;
+    display:block;
+    width: 100px;
+    font-size: 20px;
+}
+
+.btn-outline-success {
+	border-color: #00a99d;
+    color: #00a99d;
+    background-color: white;
+}
+
+.btn-outline-success:hover {
+	background-color: #00a99d;
+	color: white;
 }
