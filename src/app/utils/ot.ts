@@ -80,10 +80,10 @@ export class Operation {
 
 	private isJumpLine(modification: any) {
 		let str = '';
-		if (modification[0] === '    ') {
-			console.log('Hi i am entering here');
-			str = str + '\t';
-		}
+		// if (modification[0] === '    ') {
+		// 	console.log('Hi i am entering here');
+		// 	str = str + '    ';
+		// }
 		// if (modification.length == 1 && )
 		for (let i = 0; i < modification.length - 1; i++) {
 			str = str + modification[i] + '\n';
