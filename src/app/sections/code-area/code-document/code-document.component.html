@@ -2,9 +2,13 @@
     <div class="sidebar">
         <div class="user-name">
             <div style="margin-bottom:10px;">USER</div>
-            <button class="btn btn-outline-success btn-sm" style="margin-right: 10px;" (click)="logOut()">Log out</button>
+            <button class="btn btn-outline-danger btn-sm" (click)="logOut()">Log out</button>
         </div>
-        <p *ngIf="document" class="document">{{document.name}}</p>
+        <div class="document">
+            <p *ngIf="document" style="margin-bottom: 10px;">{{document.name}}</p>
+            <button class="btn btn-outline-primary btn-sm" (click)="downloadFile()">Download File</button>
+            <button class="btn btn-outline-success btn-sm" (click)="run()">Run</button>
+        </div>
         <p class="users">Shared with:</p>
         <ul *ngIf="document"> <!-- AQUI VA EL FOR DE LOS USARIOS -->
             <!-- AQUI VA UN IF QUE NI IDEA DE COMO SE HACE DE SI EL USER ESTA CONECTADO O NO -->

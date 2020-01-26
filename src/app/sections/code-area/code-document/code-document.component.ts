@@ -5,6 +5,7 @@ import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Operation } from 'src/app/utils/ot';
 import { AuthService } from 'src/app/services/auth.service';
+import { saveAs } from 'file-saver';
 
 @Component({
 	selector: 'app-code-document',
@@ -119,5 +120,10 @@ export class CodeDocumentComponent implements OnInit {
 	logOut() {
 		this.auth.logout().subscribe((response) => console.log(response), (e) => console.log('Error has ocurred!', e));
 		this.router.navigate([ '/login' ]);
+	}
+
+	downloadFile(){
+		var file = new File([this.document.content], this.document.name, {type: "text/plain;charset=utf-8"});
+		saveAs(file);
 	}
 }
