@@ -73,11 +73,18 @@ export class CodeDocumentComponent implements OnInit {
 	ngAfterViewInit(): void {
 		this.cm = this.codeEditor.codeMirror;
 		this.cm.on('changes', (_, changes) => {
+			console.log(changes);
 			// Ignore the event when is the type of setValue
-			if (changes[0].origin == 'setValue' || !changes[0].origin) return;
-			const operation = new Operation(changes[0], this.documentForm.value.content).createOperation();
-			const version = this._documentService.version;
-			this._documentService.sendOperation(operation.toJSON(), this.docId, version, this.cm.getCursor());
+			for (let i = 0; i < changes.length; i++) {
+				if (changes[i].origin == 'setValue' || !changes[i].origin) return;
+
+				const operation = new Operation(changes[i], this.documentForm.value.content).createOperation();
+				if (changes.length === 2) {
+					console.log(operation);
+				}
+				const version = this._documentService.version;
+				this._documentService.sendOperation(operation.toJSON(), this.docId, version, this.cm.getCursor());
+			}
 		});
 		// I'll join the document when all the view is charge
 		this.userService.getProfile().subscribe((me) => {
@@ -154,5 +161,9 @@ export class CodeDocumentComponent implements OnInit {
 	downloadFile() {
 		var file = new File([ this.document.content ], this.document.name, { type: 'text/plain;charset=utf-8' });
 		saveAs(file);
+	}
+
+	run() {
+		this._documentService.runDoc(this.document._id);
 	}
 }

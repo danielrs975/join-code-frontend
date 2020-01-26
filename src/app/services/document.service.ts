@@ -102,6 +102,10 @@ export class DocumentService {
 		this.socket.disconnect();
 	}
 
+	runDoc(id: string) {
+		this.socket.emit('run', id);
+	}
+
 	/**
 	 * This method listen to new changes in the doc 
 	 * of the server. But we are receiving for now the doc complete.
