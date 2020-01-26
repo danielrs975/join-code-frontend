@@ -1,14 +1,14 @@
 <div class="flex-container" style="background-color: #2D2D2D">
     <div class="sidebar">
         <div class="user-name">
-            <div style="margin-bottom:10px;">USER</div>
+            <div *ngIf="profile" style="margin-bottom:10px;">{{profile.name}}</div>
             <button class="btn btn-outline-success btn-sm" style="margin-right: 10px;" (click)="logOut()">Log out</button>
         </div>
         <p *ngIf="document" class="document">{{document.name}}</p>
         <p class="users">Shared with:</p>
         <ul *ngIf="document"> <!-- AQUI VA EL FOR DE LOS USARIOS -->
             <!-- AQUI VA UN IF QUE NI IDEA DE COMO SE HACE DE SI EL USER ESTA CONECTADO O NO -->
-            <li *ngFor="let user of document.users" class="conected-user">{{user.name}}</li>
+            <li *ngFor="let user of users" class="conected-user" [ngClass]="{'conected-user': user.connected}">{{user.name}}</li>
         </ul>
         <p class="bottom1">Last updated by: name</p>
         <p *ngIf="document" class="bottom2">Owner: {{document.owner.name}}</p>
