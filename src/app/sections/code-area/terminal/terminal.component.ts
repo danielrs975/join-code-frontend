@@ -39,5 +39,8 @@ export class TerminalComponent implements OnInit {
 			const attachAddon = new AttachAddon(socket);
 			this.child['term'].loadAddon(attachAddon);
 		};
+		socket.onclose = () => {
+			console.log('closing conection');
+		};
 	}
 }

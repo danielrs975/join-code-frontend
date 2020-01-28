@@ -68,6 +68,10 @@ export class CodeDocumentComponent implements OnInit {
 			const userDisconnected = this.users.find((userConnected) => userConnected._id === user['_id']);
 			userDisconnected.connected = false; // When a user left the document we put the its status as disconnected
 		});
+
+		this._documentService.comeBackError.subscribe((doc) => {
+			this.documentForm.patchValue(doc, { emitEvent: false });
+		});
 	}
 
 	ngAfterViewInit(): void {

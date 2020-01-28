@@ -3,6 +3,7 @@ import { Socket } from 'ngx-socket-io';
 import { Operation } from '../utils/ot';
 import { Subject } from 'rxjs';
 import * as ot from 'ot';
+import { ChildActivationStart } from '@angular/router';
 @Injectable({
 	providedIn: 'root'
 })
@@ -14,6 +15,7 @@ export class DocumentService {
 	updateCursors = new Subject();
 	userLeft = new Subject();
 
+	comeBackError = new Subject();
 	// The version is really important for the algorithm
 	// We are going to get it from the document when we join
 	version: number;
@@ -79,7 +81,7 @@ export class DocumentService {
 			this.socket.emit(
 				'operation',
 				{ operation, meta: { socketId: this.socketId, docId, version, cursorPos } },
-				(operationProcessed) => {
+				(operationProcessed, doc) => {
 					if (operationProcessed) {
 						// If exists some operations that are in the buffer
 						// Send it to the server an put it in the waiting aknowledgement variable
@@ -88,10 +90,17 @@ export class DocumentService {
 						if (this.buffer)
 							this.sendOperation(undefined, docId, this.versionOfBufferOp, this.bufferCursorPos);
 						// this.version += 1;
-					} else console.log('The error ocurred while applying your operation');
+					} else {
+						console.log('The error ocurred while applying your operation. Restarting');
+						this.comeBackError.next(doc);
+						this.version = doc.version;
+						this.buffer = undefined;
+						this.waitingAkn = undefined;
+						// this.sendOperation(this.waitingAkn, docId, version, cursorPos);
+					}
 				}
 			);
-		}, 5000);
+		}, 15000);
 	}
 
 	/**
