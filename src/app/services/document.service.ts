@@ -111,8 +111,16 @@ export class DocumentService {
 		this.socket.disconnect();
 	}
 
-	runDoc(id: string) {
-		this.socket.emit('run', id);
+	runDocPython(id: string) {
+		this.socket.emit('runPython', id);
+	}
+
+	runDocC(id: string) {
+		this.socket.emit('runC', id);
+	}
+
+	runDocJava(id: string) {
+		this.socket.emit('runJava', id);
 	}
 
 	/**

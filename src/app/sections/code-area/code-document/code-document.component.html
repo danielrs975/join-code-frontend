@@ -5,16 +5,17 @@
             <button class="btn btn-outline-danger btn-sm" (click)="logOut()">Log out</button>
         </div>
         <div class="document">
-            <p *ngIf="document" style="margin-bottom: 10px;">{{document.name}}</p>
+            <p *ngIf="document" style="margin-bottom: 8px;">{{document.name}}</p>
             <button class="btn btn-outline-primary btn-sm" (click)="downloadFile()">Download File</button>
-            <button class="btn btn-outline-success btn-sm" (click)="run()">Run</button>
+            <p style="margin-top: 10px; margin-bottom: 8px;">Run: </p>
+            <button class="btn btn-outline-success btn-sm" (click)="runPython()">Python</button>
+            <button class="btn btn-outline-success btn-sm" (click)="runC()">C</button>
+            <button class="btn btn-outline-success btn-sm" (click)="runJava()">Java</button>
         </div>
         <p class="users">Shared with:</p>
-        <ul *ngIf="document"> <!-- AQUI VA EL FOR DE LOS USARIOS -->
-            <!-- AQUI VA UN IF QUE NI IDEA DE COMO SE HACE DE SI EL USER ESTA CONECTADO O NO -->
+        <ul *ngIf="document">
             <li *ngFor="let user of users" class="conected-user" [ngClass]="{'conected-user': user.connected}">{{user.name}}</li>
         </ul>
-        <p class="bottom1">Last updated by: name</p>
         <p *ngIf="document" class="bottom2">Owner: {{document.owner.name}}</p>
     </div>
 

@@ -181,7 +181,15 @@ export class CodeDocumentComponent implements OnInit {
 		saveAs(file);
 	}
 
-	run() {
-		this._documentService.runDoc(this.document._id);
+	runPython() {
+		this._documentService.runDocPython(this.document._id);
+	}
+
+	runC() {
+		this._documentService.runDocC(this.document._id);
+	}
+
+	runJava() {
+		this._documentService.runDocJava(this.document._id);
 	}
 }
