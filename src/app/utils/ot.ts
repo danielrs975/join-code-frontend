@@ -1,7 +1,6 @@
 /**
  * This contain all the functions related
  * to the Operational transformation algorithm
- * @author Daniel Rodriguez
  */
 import * as ot from 'ot';
 
